@@ -2,45 +2,50 @@
 
 ### Author
 ### Current Doc Version
+- 11-01-2025  version 1.0  Starshynov  Created and structured Spec logic.
+- 11-04/05-2025  version 1.1  Starshynov  Filled main descripiton in subsections of the document.
 
 ## 1. Introduction
 
 ### Project name
-
+"[SchoolName] Tall Ecosystem"
 ### Brief description (what the system does and for whom)
+Система вспомогательных приложений, упрощающая индивидуальный процесс обучения Голландскому языку. Система предназначеня в первую очередь для людей, кто изучает Голландский как свой второй язык. 
 
 ### Project goal (what problem it solves)
+Система сервисов упрощает, автоматизирует индивидуальный процесс обучения и кастомизирует уникальный школьный подход к процессу передачи знаний.
 
 ### Product Hystory
 <details>
   <summary>Изначально проект был придумал и оформлен как MVP с моей стороны. Потенциальный заказчик откликнулся и дал зеленый свет полноценной разработке</summary>
-  Здесь описание первой темы.
+Одна из школ создала новую программу – ускоренный курс изучения для способных учеников. Программа состояла из комбинации нескольких учебников и он-лайн заданий, что вызывало сложность контроля и содержало повторы. Было сложно и следить-хранить несколько источников. Я объединил сначала словари. Потом расширил систему добавив два способа заучивания слов(карточки по темам и карточки повторения), добавил индивидуальный словарь. Далее появился сервис Читалки с режимом свободного чтения и Теста на понимание с автопроверкой ответов. Следующий сервис это он-лайн/оффлайн видео с вопросами. Сервиса Читалки и Изучения слов получили в дополнение к веб-версии и нативную Андроид версию. В процессе разработки сервис он-лайн упражнений (драг-н-дроп и инпут поля) с автопроверкой.   
 </details>
+
 ---
 
 ## 2. Overall Architecture
 
-### Architectural approach: Event-Driven Microservices Architecture
+### Architectural approach: 
 <details>
-  <summary>Саммари</summary>
+  <summary>Event-Driven Microservices Architecture</summary>
   Здесь описание первой темы.
 </details>
 
-### Core principles (asynchronous, independent, scalable)
+### Core principles
 <details>
-  <summary>Саммари</summary>
+  <summary> asynchronous, independent, scalable</summary>
   Здесь описание первой темы.
 </details>
 
-### List of microservices and their responsibilities
+### List of microservices and their short responsibilities
 <details>
-  <summary>Саммари</summary>
+  <summary>Саммари. Больше о каждом микросервисе в соответствующем разделе</summary>
   Здесь описание первой темы.
 </details>
 
-### Architecture diagram (optional)
+### Architecture diagram
 <details>
-  <summary>Саммари</summary>
+  <summary>diagram (optional)</summary>
   Здесь описание первой темы.
 </details>
 
@@ -48,45 +53,49 @@
 
 ## 3. Technology Stack
 
-### Frontend: Angular, Angular Material, Zustand
+### Frontend
 <details>
-  <summary>Саммари</summary>
+  <summary>Angular, Angular Material, Zustand</summary>
   Здесь описание первой темы.
 </details>
 
-### Backend: Bun, REST API
+### Backend
 <details>
-  <summary>Саммари</summary>
+  <summary>Bun, REST API</summary>
   Здесь описание первой темы.
 </details>
 
-### Messaging: Kafka + Schema Registry
+### Messaging
 <details>
-  <summary>Саммари</summary>
+  <summary>Kafka + Schema Registry</summary>
   Здесь описание первой темы.
 </details>
 
-### Databases: PostgreSQL (auth), MongoDB (content)
+### Databases
 <details>
-  <summary>Саммари</summary>
+  <summary>PostgreSQL (auth), MongoDB (content)</summary>
   Здесь описание первой темы.
 </details>
 
-### Deployment: Docker Compose + AWS
+### Deployment 
 <details>
-  <summary>Саммари</summary>
+  <summary>Docker Compose + AWS</summary>
   Здесь описание первой темы.
 </details>
 
-### Desktop & Mobile: Electron / Cordova
+### Desktop & Mobile: 
 <details>
-  <summary>Саммари</summary>
+  <summary>Desktop - Electron</summary>
+  Здесь описание первой темы.
+</details>
+<details>
+  <summary>Mobile - Cordova</summary>
   Здесь описание первой темы.
 </details>
 
-### Monitoring: ELK, Prometheus + Grafana
+### Monitoring 
 <details>
-  <summary>Саммари</summary>
+  <summary>ELK, Prometheus + Grafana</summary>
   Здесь описание первой темы.
 </details>
 
@@ -98,9 +107,9 @@
   Здесь описание первой темы.
 </details>
 
-### List of roles (Technical Admin, Educational Admin, Teacher, Student)
+### Roles 
 <details>
-  <summary>Саммари</summary>
+  <summary>List of Roles(Technical Admin, Educational Admin, Teacher, Student)</summary>
   Здесь описание первой темы.
 </details>
 
@@ -110,19 +119,16 @@
   Здесь описание первой темы.
 </details>
 
-### Authentication and authorization service (Profile Service, JWT, Argon2, Refresh Tokens)
+### Authentication and authorization service 
 <details>
-  <summary>Саммари</summary>
+  <summary>(Profile Service, JWT, Argon2, Refresh Tokens)</summary>
   Здесь описание первой темы.
 </details>
 
 ---
 
 ## 5. Microservice Descriptions
-<details>
-  <summary>Саммари</summary>
   Здесь описание первой темы.
-</details>
 
 ### microservice schema
 <details>
@@ -130,10 +136,7 @@
   Здесь описание первой темы.
 </details>
 
-
-
-
-#### Profile:
+#### Profile microservice.
 <details>
   <summary>Profile Саммари</summary>
 ##### Name and purpose
@@ -147,7 +150,7 @@
 ##### External integrations (AWS S3, Secrets Manager, etc.)
 </details>
 
-#### Lobby:
+#### Lobby microservice.
 <details>
   <summary>Lobby Саммари</summary>
 ##### Name and purpose
@@ -161,7 +164,7 @@
 ##### External integrations (AWS S3, Secrets Manager, etc.)
 </details>
 
-#### Thematic Cards:
+#### Thematic Cards microservice.
 <details>
   <summary>Thematic Cards Саммари</summary>
 ##### Name and purpose
@@ -175,7 +178,7 @@
 ##### External integrations (AWS S3, Secrets Manager, etc.)
 </details>
 
-#### Learning Cards:
+#### Learning Cards microservice.
 <details>
   <summary>Learning Cards Саммари</summary>
 ##### Name and purpose
@@ -189,7 +192,7 @@
 ##### External integrations (AWS S3, Secrets Manager, etc.)
 </details>
 
-#### Reader:
+#### Reader microservice.
 <details>
   <summary>Reader Саммари</summary>
 ##### Name and purpose
@@ -203,9 +206,9 @@
 ##### External integrations (AWS S3, Secrets Manager, etc.)
 </details>
 
-#### Video Tests:
+#### Listening microservice.
 <details>
-  <summary>Video Tests Саммари</summary>
+  <summary>Listening (Video Tests) Саммари</summary>
 ##### Name and purpose
  Здесь описание первой темы.
 ##### Main API endpoints
@@ -217,7 +220,7 @@
 ##### External integrations (AWS S3, Secrets Manager, etc.)
 </details>
 
-#### Admin:
+#### Admin microservice.
 <details>
   <summary>Admin Саммари</summary>
 ##### Name and purpose
@@ -231,7 +234,7 @@
 ##### External integrations (AWS S3, Secrets Manager, etc.)
 </details>
 
-#### PII:
+#### PII microservice.
 <details>
   <summary>PII Саммари</summary>
 ##### Name and purpose
@@ -245,7 +248,7 @@
 ##### External integrations (AWS S3, Secrets Manager, etc.)
 </details>
 
-#### For each microservice:
+#### For microservice.
 <details>
   <summary>Саммари</summary>
 ##### Name and purpose
@@ -325,10 +328,7 @@
 ---
 
 ## 7. Data and Storage
-<details>
-  <summary>Саммари</summary>
   Здесь описание первой темы.
-</details>
 
 ### General data model
 <details>
@@ -392,21 +392,21 @@
   Здесь описание первой темы.
 </details>
 
-### Token-based authorization (Access + Refresh tokens)
+### Token-based authorization 
 <details>
-  <summary>Саммари</summary>
+  <summary>(Access + Refresh tokens)</summary>
   Здесь описание первой темы.
 </details>
 
-### Key rotation and access audit (Kafka pii.access.log)
+### Key rotation and access audit 
 <details>
-  <summary>Саммари</summary>
+  <summary>(Kafka pii.access.log)</summary>
   Здесь описание первой темы.
 </details>
 
-### GDPR compliance: export/delete endpoints, user.pii.updated event
+### GDPR compliance
 <details>
-  <summary>Саммари</summary>
+  <summary>export/delete endpoints, user.pii.updated event</summary>
   Здесь описание первой темы.
 </details>
 
@@ -414,27 +414,27 @@
 
 ## 9. Logging and Monitoring
 
-### Application logs → ELK
+### Application logs 
 <details>
-  <summary>Саммари</summary>
+  <summary>→ ELK</summary>
   Здесь описание первой темы.
 </details>
 
-### Event logs → Kafka + S3 archive
+### Event logs 
 <details>
-  <summary>Саммари</summary>
+  <summary>→ Kafka + S3 archive</summary>
   Здесь описание первой темы.
 </details>
 
-### System logs → ELK
+### System logs
 <details>
-  <summary>Саммари</summary>
+  <summary> → ELK</summary>
   Здесь описание первой темы.
 </details>
 
-### Metrics / traces → Prometheus + Grafana
+### Metrics / traces 
 <details>
-  <summary>Саммари</summary>
+  <summary>→ Prometheus + Grafana</summary>
   Здесь описание первой темы.
 </details>
 
@@ -482,39 +482,39 @@
 
 ## 11. Testing and Quality
 
-### Unit tests (Vitest, Jest)
+### Unit tests 
 <details>
-  <summary>Саммари</summary>
+  <summary>(Vitest, Jest)</summary>
   Здесь описание первой темы.
 </details>
 
-### Integration tests (Testcontainers, Supertest)
+### Integration tests 
 <details>
-  <summary>Саммари</summary>
+  <summary>(Testcontainers, Supertest)</summary>
   Здесь описание первой темы.
 </details>
 
-### End-to-End tests (Playwright)
+### End-to-End tests 
 <details>
-  <summary>Саммари</summary>
+  <summary>(Playwright)</summary>
   Здесь описание первой темы.
 </details>
 
-### Contract tests (Pact + Schema Registry)
+### Contract tests 
 <details>
-  <summary>Саммари</summary>
+  <summary>(Pact + Schema Registry)</summary>
   Здесь описание первой темы.
 </details>
 
-### Load testing (k6, Kafka performance tools)
+### Load testing 
 <details>
-  <summary>Саммари</summary>
+  <summary>(k6, Kafka performance tools)</summary>
   Здесь описание первой темы.
 </details>
 
-### CI test integration (GitHub Actions)
+### CI test integration 
 <details>
-  <summary>Саммари</summary>
+  <summary>(GitHub Actions)</summary>
   Здесь описание первой темы.
 </details>
 
@@ -522,21 +522,21 @@
 
 ## 12. Monitoring and Incident Response
 
-### Metrics tracked (latency, throughput, consumer lag)
+### Metrics tracked 
 <details>
-  <summary>Саммари</summary>
+  <summary>(latency, throughput, consumer lag)</summary>
   Здесь описание первой темы.
 </details>
 
-### Alerting (Grafana Alerts / Slack / Email)
+### Alerting 
 <details>
-  <summary>Саммари</summary>
+  <summary>(Grafana Alerts / Slack / Email)</summary>
   Здесь описание первой темы.
 </details>
 
-### Failure response scenarios (rollback, redeploy)
+### Failure response scenarios 
 <details>
-  <summary>Саммари</summary>
+  <summary>(rollback, redeploy)</summary>
   Здесь описание первой темы.
 </details>
 
@@ -563,9 +563,9 @@
   Здесь описание первой темы.
 </details>
 
-### Auto-scaling (AWS ECS / Kubernetes)
+### Auto-scaling 
 <details>
-  <summary>Саммари</summary>
+  <summary>(AWS ECS / Kubernetes)</summary>
   Здесь описание первой темы.
 </details>
 

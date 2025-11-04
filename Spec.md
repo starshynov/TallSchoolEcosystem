@@ -3,7 +3,7 @@
 ### Author
 ### Current Doc Version
 
-## 1. 📘 Introduction
+## 1. Introduction
 
 ### Project name
 
@@ -15,7 +15,7 @@
 
 ---
 
-## 2. 🏗️ Overall Architecture
+## 2. Overall Architecture
 
 ### Architectural approach: Event-Driven Microservices Architecture
 
@@ -27,7 +27,7 @@
 
 ---
 
-## 3. ⚙️ Technology Stack
+## 3. Technology Stack
 
 ### Frontend: Angular, Angular Material, Zustand
 
@@ -45,7 +45,7 @@
 
 ---
 
-## 4. 👥 Users and Roles
+## 4. Users and Roles
 
 ### List of roles (Technical Admin, Educational Admin, Teacher, Student)
 
@@ -55,7 +55,7 @@
 
 ---
 
-## 5. 🧩 Microservice Descriptions
+## 5. Microservice Descriptions
 
 ### For each microservice:
 
@@ -73,7 +73,7 @@
 
 ---
 
-## 6. 🔁 Integration and Communication
+## 6. Integration and Communication
 
 ### Data exchange mechanisms (Kafka topics)
 
@@ -91,7 +91,7 @@
 
 ---
 
-## 7. 🧠 Data and Storage
+## 7. Data and Storage
 
 ### General data model
 
@@ -107,7 +107,7 @@
 
 ---
 
-## 8. 🔒 Security and PII
+## 8. Security and PII
 
 ### Isolation of personal data (PII Service)
 
@@ -123,7 +123,7 @@
 
 ---
 
-## 9. 🪵 Logging and Monitoring
+## 9. Logging and Monitoring
 
 ### Application logs → ELK
 
@@ -137,7 +137,7 @@
 
 ---
 
-## 10. 🧰 DevOps and CI/CD
+## 10. DevOps and CI/CD
 
 ### GitHub repositories (separate for each service, frontend/backend)
 
@@ -151,7 +151,7 @@
 
 ---
 
-## 11. 🧪 Testing and Quality
+## 11. Testing and Quality
 
 ### Unit tests (Vitest, Jest)
 
@@ -167,7 +167,7 @@
 
 ---
 
-## 12. 📈 Monitoring and Incident Response
+## 12. Monitoring and Incident Response
 
 ### Metrics tracked (latency, throughput, consumer lag)
 
@@ -177,7 +177,7 @@
 
 ---
 
-## 13. 📜 Roadmap and Future Development
+## 13. Roadmap and Future Development
 
 ### Transition to staging environment
 

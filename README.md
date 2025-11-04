@@ -1,2 +1,0 @@
-# TallSchoolEcosystem
-Tall School Ecosystem

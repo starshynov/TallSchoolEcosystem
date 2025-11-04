@@ -12,7 +12,10 @@
 ### Project goal (what problem it solves)
 
 ### Product Hystory
-
+<details>
+  <summary>Изначально проект был придумал и оформлен как MVP с моей стороны. Потенциаьлный заказчик откликнулся и дал зеленый свет полноценной разработке</summary>
+  Здесь описание первой темы.
+</details>
 ---
 
 ## 2. Overall Architecture

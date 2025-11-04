@@ -616,42 +616,82 @@ MongoDB (коллекции topics, words, userProgress).
 ---
 
 ## 7. Data and Storage
-  Здесь описание первой темы.
+**Общая структура хранения данных**
+Система использует гибридную модель:
+- PostgreSQL для структурированных и чувствительных данных (профили, токены, роли, PII).
+- MongoDB для контента и учебных данных (словарей, текстов, тестов, прогресса).
+- AWS S3 для мультимедиа (аудио, видео, изображения, файлы).
+- Kafka как хранилище событий (event log), а также как транспорт между сервисами.
 
 ### General data model
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Cтруктура хранения данных</summary>
+--- ТУТ БУДЕТ СХЕМА: структура хранения данных (PostgreSQL, MongoDB, AWS S3, Kafka) ---
 </details>
 
-### Division between PostgreSQL / MongoDB
+### PostgreSQL / MongoDB
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Division between PostgreSQL / MongoDB</summary>
+**PostgreSQL**
+Используется для хранения данных авторизации и персональных данных.
+- Таблицы: users, roles, tokens, pii_encrypted.
+- Пароли хэшируются через Argon2.
+- Персональные данные шифруются AES-256-GCM (на уровне Bun-приложения).
+- Ключи хранятся и ротируются каждые 90 дней в AWS Secrets Manager.
+
+**MongoDB**
+Используется для контентных и динамических данных, где структура может меняться. Каждый сервис имеет свою базу или коллекции, не видит данные соседей.
+Примеры коллекций:
+- Thematic Cards Service — topics, words, userProgress.
+- Learning Cards Service — userWords, schedule.
+- Reader Service —
+> дефолтные тексты (встроенная библиотека),
+> пользовательские тексты (импортируемые пользователем),
+> тексты для тестов (встроенные).
+- Video Tests Service — videos, questions, results.
+- Admin Service — content, metadata.
+
+Mongo хранит текстовые данные, результаты тестов, а также ссылки на мультимедиа в S3.
 </details>
 
 ### AWS S3 storage per service
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
-</details>
-
-### Media storage (audio, video, images, texts)
-<details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+<summary>Каждый микросервис имеет свой изолированный префикс или бакет:</summary>
+```
+app-media/
+ ├── cards/
+ ├── reader/
+ ├── video-tests/
+ ├── profile/
+```
+**Основные правила:**
+- Сервисы не видят мультимедиа соседей (изоляция).
+- Допускаются дубли, если разные сервисы используют одинаковые ресурсы.
+- Аудио: .mp3 или .ogg, сжатие без потерь, доступ через pre-signed URLs.
+- Видео: .mp4 (H.264/AAC), CDN через CloudFront, архивные версии — в Glacier.
+- Изображения: .webp / .avif, автоматическая генерация превью через AWS Lambda.
+- Тексты: JSON / Markdown файлы в S3 (если не в Mongo).
+- В десктоп-версии видео зашифрованы и хранятся в бинарном виде без открытых файлов.
 </details>
 
 ### Caching (LocalStorage, per-service in-memory cache)
 <details>
   <summary>Саммари</summary>
-  Здесь описание первой темы.
+**Client-side:**
+- LocalStorage хранит Access/Refresh токены, роль, данные последней сессии.
+
+  **Server-side (per service):**
+- In-memory cache хранит активные сессии, циклы, недели, когорты слов.
+- Кэш состояния позволяет пользователю при входе вернуться в то место, где он закончил.
+- Обновление кэша происходит по событиям Kafka или cron-задачам.
 </details>
 
 ### Session state and progress restoration
 <details>
   <summary>Саммари</summary>
-  Здесь описание первой темы.
+- При логине через Profile Service пользователь попадает в “Лобби”.
+- При входе в конкретный микросервис система восстанавливает сохранённое состояние (контекст обучения, сессия, прогресс).
+- Кэш состояния обновляется на событии выхода или при переходе в другой сервис.
 </details>
 
 ---
@@ -701,29 +741,50 @@ MongoDB (коллекции topics, words, userProgress).
 ---
 
 ## 9. Logging and Monitoring
+**Цели и принципы**
+- Полная трассируемость событий и ошибок по всем сервисам.
+- Единый формат логов (JSON), обязательные поля: timestamp, service, env, version, level, correlationId, userId?.
+- Исключение PII из логов (маскирование email/телефонов), для доступа к PII — отдельный аудит-топик.
 
 ### Application logs 
 <details>
   <summary>→ ELK</summary>
-  Здесь описание первой темы.
+Содержимое: ошибки, console.error, тайминги, stack traces, ключевые бизнес-шаги./
+Сбор и доставка: Filebeat/Fluent Bit из контейнеров → Logstash → Elasticsearch./
+Индексация: app-logs-{service}-{env}-{yyyy.MM.dd} (ротация по дате)./
+Визуализация: Kibana (дашборды ошибок, latency per endpoint, частота ретраев)./
+Ретеншн: 30–90 дней (по критичности сервиса)./
 </details>
 
 ### Event logs 
 <details>
   <summary>→ Kafka + S3 archive</summary>
-  Здесь описание первой темы.
+Содержимое: бизнес-события (user.created, content.updated, test.completed)./
+Поток: продюсеры пишут в версионированные топики (*.v1/2), консьюмер-архиватор пишет в S3./
+Схемы: Schema Registry (совместимость backward/forward)./
+Архивирование: S3 с Lifecycle-политикой (холодное хранение/Glacier)./
+Ретеншн: активные топики — по нагрузке Kafka; архив в S3 — 180–365 дней./
 </details>
 
 ### System logs
 <details>
   <summary> → ELK</summary>
-  Здесь описание первой темы.
+Источники: Kafka-брокеры, ZooKeeper (если используется), Docker/Container Runtime, ОС, reverse proxy/ingress./
+Назначение: диагностика инфраструктуры, capacity, ошибки брокеров/дисков/сетей./
+Ретеншн: 30–90 дней (по SLA)./
 </details>
 
 ### Metrics / traces 
 <details>
   <summary>→ Prometheus + Grafana</summary>
-  Здесь описание первой темы.
+Метрики приложений: latency, RPS/throughput, error rate, пулы подключений к БД, очередь задач/cron./
+Kafka-метрики: offsets, consumer lag, ISR, under-replicated partitions, broker disk usage./
+Экспортёры:/
+- HTTP-метрики из Bun (/metrics в Prometheus-формате);
+- JMX Exporter для Kafka;
+- Node Exporter для хостов/нод.
+- - Графики: Grafana (дашборды per-service, общий обзор платформы).
+- - Алерты (высокий уровень): на latency, error rate, consumer lag, диск/CPU/Memory (детали в разделе 12).
 </details>
 
 ### Log retention and storage policies
@@ -735,29 +796,66 @@ MongoDB (коллекции topics, words, userProgress).
 ---
 
 ## 10. DevOps and CI/CD
+**Общая стратегия**
+Проект следует принципам инфраструктуры как кода (IaC) и полного CI/CD цикла через GitHub и Docker Compose. Каждый микросервис полностью изолирован — имеет отдельный репозиторий для фронтенда и бэкенда, свой pipeline и независимый деплой на AWS.
 
 ### GitHub repositories (separate for each service, frontend/backend)
 <details>
   <summary>Саммари</summary>
-  Здесь описание первой темы.
+- Организация: GitHub (mono-org, multi-repo).
+- Для каждого микросервиса — 2 репозитория:
+> <service>-frontend
+> <service>-backend
+- Все репозитории используют одинаковую структуру папок и CI workflow-шаблоны (GitHub Actions).
+- Главная ветка: main → триггер на продакшен-деплой.
 </details>
 
-### Auto-deployment on push to main
+### CI 
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Continuous Integration</summary>
+- При каждом push или pull request:
+-- Запуск unit и integration тестов (Vitest, Jest, Testcontainers).
+-- Проверка линтеров и форматирования (ESLint, Prettier).
+-- Проверка схем Kafka через Schema Registry (contract validation).
+-- Сборка контейнера Docker и прогон smoke-тестов.
+- На PR-этапе создаются артефакты (сборки) и summary отчёт в GitHub Checks.
+- При неуспешных тестах merge блокируется.
+</details>
+
+### CD 
+<details>
+  <summary>Continuous Deployment</summary>
+- Автоматический деплой при merge в main.
+- Используется Docker Compose и AWS ECS / EC2 для запуска контейнеров.
+- Деплой каждого микросервиса изолирован, без зависимости от других.
+- Секреты и переменные окружения загружаются из AWS Secrets Manager.
+- Приложение обновляется без downtime — rolling обновление контейнеров.
+- Деплой логируется и отображается в CI Dashboard (GitHub Actions + AWS CLI logs).
+</details>
+
+### Environments/Среды
+<details>
+  <summary>local / production</summary>
+- **Local** — полная среда для разработки (Docker Compose поднимает Kafka, Mongo, Postgres, сервисы).
+- **Production** — основная среда, деплой на AWS.
+- **Staging** (в планах) — будет использоваться для pre-release тестов и QA.
 </details>
 
 ### Docker Compose and AWS deployment
 <details>
   <summary>Саммари</summary>
-  Здесь описание первой темы.
+- Каждый сервис имеет свой docker-compose.yml и общий шаблон для dev/CI.
+- Сервисы Kafka, MongoDB и PostgreSQL поднимаются локально при тестировании.
+- Используется multi-stage build для оптимизации размеров образов Bun и Angular.
+- Сетевые алиасы используются для межсервисного взаимодействия в dev-среде.
 </details>
 
-### Environments: local / production
+### Артефакты и версии
 <details>
   <summary>Саммари</summary>
-  Здесь описание первой темы.
+- Каждый деплой помечается Git-тегом (vX.Y.Z) и фиксируется в Changelog.
+- Версии сервисов и клиентов синхронизируются через Kafka-топик system.version.updated.
+- Система поддерживает обратную совместимость между минорными версиями.
 </details>
 
 ### Planned addition of dev / staging environments
@@ -769,97 +867,148 @@ MongoDB (коллекции topics, words, userProgress).
 ---
 
 ## 11. Testing and Quality
+**Общие принципы**
+Тестирование построено по многоуровневой модели и охватывает все аспекты — от юнитов до end-to-end сценариев./
+Главная цель — обеспечить стабильность микросервисов и гарантировать, что любые изменения кода не нарушают событийные связи и пользовательские сценарии./
+Вся автоматизация интегрирована в GitHub Actions и выполняется при каждом пуше и перед деплоем./
 
 ### Unit tests 
 <details>
-  <summary>(Vitest, Jest)</summary>
-  Здесь описание первой темы.
+  <summary>Проверяют отдельные функции, компоненты и классы без внешних зависимостей. (Vitest, Jest)</summary>
+**Frontend (Angular)**
+- Фреймворк: Jest (вместо Karma).
+- Покрытие: компоненты, сервисы, пайпы, Zustand-хранилища.
+- Моки HTTP-запросов — через HttpClientTestingModule.
+
+**Backend (Bun)**
+- Фреймворк: Vitest (нативная поддержка Bun).
+- Моки зависимостей (vi.fn(), sinon).
+- Проверяются бизнес-правила, валидация, cron-задачи, генерация событий Kafka.
+
+✅ Запуск unit-тестов на каждом коммите и PR.
 </details>
 
 ### Integration tests 
 <details>
-  <summary>(Testcontainers, Supertest)</summary>
-  Здесь описание первой темы.
+<summary>Проверяют взаимодействие микросервисов и корректность API. (Testcontainers, Supertest)</summary>
+- Используется Testcontainers (NodeJS SDK) для динамического запуска Kafka, MongoDB, PostgreSQL.
+- Каждый микросервис поднимается в контейнере с тестовой конфигурацией.
+- Проверяются сценарии:
+-- создание пользователя → событие user.created → обработка Reader/Card Service;
+-- обновление контента → content.updated → синхронизация кэшей клиентов.
+- Инструменты: Supertest, Vitest, Docker Compose (dev).
 </details>
 
 ### End-to-End tests 
 <details>
-  <summary>(Playwright)</summary>
-  Здесь описание первой темы.
+<summary>Проверяют поведение с точки зрения пользователя. (Playwright)</summary>
+- Фреймворк: Playwright (Angular-friendly, кроссбраузерный).
+- Тестируются ключевые сценарии:
+-- регистрация/логин,
+-- выбор карточек и чтение текстов,
+-- выполнение видео-теста,
+-- проверка восстановления состояния после выхода.
+- Поддержка headless и CI-режима.
+- Отчёты (видео, скриншоты) сохраняются как артефакты CI.
 </details>
 
 ### Contract tests 
 <details>
-  <summary>(Pact + Schema Registry)</summary>
-  Здесь описание первой темы.
+<summary>(межсервисные контракты) Проверяют совместимость Kafka-событий и API. (Pact + Schema Registry)</summary>
+- Инструмент: Pact + Schema Registry.
+- Продюсеры публикуют контракты (*.json / .avsc), консьюмеры проверяют совместимость.
+- Любое несовпадение схемы блокирует merge или деплой.
+- Используется для топиков user.events, content.updated, video.results.
 </details>
 
-### Load testing 
+### Load & Stress Tests
 <details>
-  <summary>(k6, Kafka performance tools)</summary>
-  Здесь описание первой темы.
+<summary>Проверяют устойчивость и производительность. (k6, Kafka performance tools)</summary>
+- Инструменты:
+-- k6 — нагрузка на REST API Bun.
+-- Kafka Performance Tool — throughput, consumer lag, latency.
+-- Grafana + Prometheus — визуализация задержек и производительности.
+- Периодический прогон — раз в неделю (через cron-job CI).
+</details>
+
+### Static Analysis & Quality Gates
+<details>
+<summary>(GitHub Actions)</summary>
+- ESLint, Prettier — проверка синтаксиса и форматирования.
+- TypeScript strict mode — во всех сервисах.
+- SonarQube / CodeQL — анализ уязвимостей, дубликатов и dead code.
+- Coverage reports — собираются в CI, минимальный порог 85%.
 </details>
 
 ### CI test integration 
 <details>
   <summary>(GitHub Actions)</summary>
-  Здесь описание первой темы.
+- GitHub Actions:
+-- Unit + integration → при PR;
+-- E2E → при merge в main;
+-- Контракты и нагрузочные → при nightly build.
+- Неуспешные тесты блокируют деплой.
+- Все отчёты собираются в GitHub Checks и Slack.
+</details>
+
+### Manual QA (в разработке)
+<details>
+  <summary>(GitHub Actions)</summary>
+- Staging-среда будет использоваться для визуальных регрессионных тестов.
+- Планируется внедрение BackstopJS для сравнения UI состояний.
 </details>
 
 ---
 
 ## 12. Monitoring and Incident Response
+**Monitoring Overview**
+Система мониторинга построена на связке Prometheus + Grafana + ELK, с дополнительными алертами в Slack и Email./
+Мониторинг охватывает состояние инфраструктуры (Kafka, базы, контейнеры), производительность приложений и пользовательскую активность./
+Все данные агрегируются в центральные дашборды, доступные техническому администратору./
 
 ### Metrics tracked 
 <details>
-  <summary>(latency, throughput, consumer lag)</summary>
-  Здесь описание первой темы.
+<summary>Prometheus (latency, throughput, consumer lag)</summary>
+- Каждый микросервис Bun экспортирует /metrics в формате Prometheus (latency, error rate, RPS, queue size).
+- Дополнительные экспортёры:
+-- Kafka JMX Exporter — метрики брокеров, consumer lag, ISR, offset drift.
+-- Node Exporter — системные показатели (CPU, RAM, Disk I/O, Network).
+-- Postgres Exporter, Mongo Exporter — состояние подключений, запросов и репликации.
+- Метрики опрашиваются каждые 15–30 секунд.
+- Для cron-задач добавлены кастомные метрики (job.last_run_time, job.status).
 </details>
 
 ### Alerting 
 <details>
-  <summary>(Grafana Alerts / Slack / Email)</summary>
-  Здесь описание первой темы.
+<summary>(Grafana Alerts / Slack / Email)</summary>
+- Дашборды разделены по категориям:
+-- System — Kafka, брокеры, диски, CPU, Docker.
+-- Application — latency API, throughput, error rate, consumer lag.
+-- User Activity — активность пользователей, частота запросов к микросервисам.
+- Визуализация потоков Kafka и задержек консьюмеров.
+- Алерты:
+-- 80% CPU или RAM usage;
+-- рост latency более чем на 200%;
+-- consumer lag >1000 сообщений;
+-- ошибка деплоя или отказ контейнера.
+- Уведомления — Slack, Email (технический админ).
 </details>
 
-### Failure response scenarios 
+### ELK Stack
 <details>
-  <summary>(rollback, redeploy)</summary>
-  Здесь описание первой темы.
+<summary>логи приложений и системы</summary>
+- Отслеживает ошибки приложений и инфраструктуры.
+- В Kibana отдельные дашборды:
+-- Error heatmap per service;
+-- Latency по эндпоинтам;
+-- Kafka broker error logs.
+- Периодически анализируются spike-пики ошибок и причины (stack traces, correlationId).
 </details>
 
 ---
 
 ## 13. Roadmap and Future Development
-Здесь описание первой темы.
-
-### Transition to staging environment
-<details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
-</details>
-
-### Introduction of a centralized PII service
-<details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
-</details>
-
-### Automated progress analytics
-<details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
-</details>
-
-### Auto-scaling 
-<details>
-  <summary>(AWS ECS / Kubernetes)</summary>
-  Здесь описание первой темы.
-</details>
-
-### Offline-first support
-<details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
-</details>
+11-04-2025  MVP Version        Demo and uproval
+11-04-2025  Version 1.0.0
+11-04-2025  Version 1.0.0
 

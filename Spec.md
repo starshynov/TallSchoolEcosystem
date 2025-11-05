@@ -93,6 +93,7 @@ Event-Driven Microservices Architecture (событийно-ориентиров
 ### Frontend
 <details>
   <summary>Angular + Material + Zustand с поддержкой Cordova и Electron.</summary>
+  
 **Frontend**
 - Angular (TypeScript) — основной SPA-клиент (web).
 - Angular Router (@angular/router) — маршрутизация.

@@ -564,33 +564,6 @@ MongoDB (коллекции topics, words, userProgress).
 НЕТ ОПИСАНИЯ
 </details>
 
-#### For microservice.
-<details>
-  <summary>Саммари</summary>
-##### Name and purpose
- Здесь описание первой темы.
-##### Main API endpoints
- Здесь описание первой темы.
-##### Kafka events (topics, schemas, version)
- Здесь описание первой темы.
-##### Databases and collections used
- Здесь описание первой темы.
-##### External integrations (AWS S3, Secrets Manager, etc.)
-</details>
-
-#### For each microservice:
-<details>
-  <summary>Саммари</summary>
-##### Name and purpose
- Здесь описание первой темы.
-##### Main API endpoints
- Здесь описание первой темы.
-##### Kafka events (topics, schemas, version)
- Здесь описание первой темы.
-##### Databases and collections used
- Здесь описание первой темы.
-##### External integrations (AWS S3, Secrets Manager, etc.)
-</details>
 ---
 
 ## 6. Integration and Communication

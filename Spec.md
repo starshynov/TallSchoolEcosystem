@@ -2,94 +2,114 @@
 
 ### Author
 ### Current Doc Version
-- 11-01-2025  version 1.0  Starshynov  Created and structured Spec logic.
-- 11-04/05-2025  version 1.1  Starshynov  Filled main descripiton in subsections of the document.
+- 11-01-2025  version 1.0  Starshynov  Created and structured Spec logic.  
+- 11-04/05-2025  version 1.1  Starshynov  Filled main descriptions in document subsections.
+
+---
 
 ## 1. Introduction
 
 ### Project name
 "[SchoolName] Tall Ecosystem"
+
 ### Brief description (what the system does and for whom)
-Система вспомогательных приложений, упрощающая индивидуальный процесс обучения Голландскому языку. Система предназначеня в первую очередь для людей, кто изучает Голландский как свой второй язык. Платформа объединяет обучение по словарям, чтению, видео и тестам в единую систему с автоматическим контролем прогресса.
-Проект представляет собой образовательную платформу для школ с ускоренной программой обучения. Она объединяет различные форматы контента — словари, тексты, видео и интерактивные упражнения — в единую систему с контролем прогресса. Платформа решает проблему раздробленности источников (учебники, онлайн-задания, карточки, видеоуроки) и дублирования материалов, предоставляя ученикам и преподавателям единое пространство для обучения.
+A system of supporting applications that simplifies the individual process of learning the Dutch language.  
+The system is primarily designed for people learning Dutch as their second language.  
+The platform integrates vocabulary study, reading, video lessons, and tests into a single system with automatic progress tracking.
+
+The project represents an educational platform for schools with accelerated learning programs. It combines various content formats — dictionaries, texts, videos, and interactive exercises — into one cohesive system with built-in progress control.  
+The platform addresses the issue of fragmented learning sources (textbooks, online tasks, flashcards, video lessons) and content duplication by providing both students and teachers with a unified learning environment.
 
 ### Project goal (what problem it solves)
-Accelerated Learning Platform. Система сервисов упрощает, автоматизирует индивидуальный процесс обучения и кастомизирует уникальный школьный подход к процессу передачи знаний.
-Создать единую адаптивную систему обучения для способных учеников, где все элементы (лексика, чтение, тесты, видео, упражнения) интегрированы, а прогресс отслеживается автоматически.
-Main users:
-- Ученики, проходящие программу ускоренного обучения.
-- Учителя, отслеживающие результаты и корректирующие задания.
-- Учебные администраторы, управляющие контентом и доступами.
-- Технический администратор, отвечающий за инфраструктуру и безопасность.
-- 
-### Product Hystory
+**Accelerated Learning Platform.**  
+The system of services simplifies and automates the individual learning process and customizes the school’s unique teaching approach.
+
+The goal is to create a unified, adaptive learning system for gifted students where all elements (vocabulary, reading, tests, videos, exercises) are integrated, and progress is automatically tracked.
+
+**Main users:**
+- Students enrolled in the accelerated program.  
+- Teachers monitoring progress and adjusting assignments.  
+- Educational administrators managing content and access.  
+- Technical administrator responsible for infrastructure and security.
+
+### Product History
 <details>
-  <summary>Изначально проект был придумал и оформлен как MVP с моей стороны. Потенциальный заказчик откликнулся и дал зеленый свет полноценной разработке</summary>
-  
-Одна из школ создала новую программу – ускоренный курс изучения для способных учеников. Программа состояла из комбинации нескольких учебников и он-лайн заданий, что вызывало сложность контроля и содержало повторы. Было сложно и следить-хранить несколько источников. Я объединил сначала словари. Потом расширил систему добавив два способа заучивания слов(карточки по темам и карточки повторения), добавил индивидуальный словарь. Оба алгоритма были разработаны совместно с языковой школой-заказчиком, а не просто взяты из готовых решений (как Anki). Далее появился сервис Читалки с режимом свободного чтения и Теста на понимание с автопроверкой ответов. Следующий сервис это он-лайн/оффлайн видео с вопросами. Сервиса Читалки и Изучения слов получили в дополнение к веб-версии и нативную Андроид версию. В процессе разработки сервис он-лайн упражнений (драг-н-дроп и инпут поля) с автопроверкой.   
+  <summary>Initially the project was designed and implemented as an MVP by me. The potential client responded and gave the green light for full-scale development.</summary>
+
+One of the schools launched a new program — an accelerated course for gifted students.  
+The program combined several textbooks and online tasks, which made tracking progress difficult and caused duplicate content.  
+Managing multiple sources was cumbersome.  
+
+I began by merging the dictionaries. Then, I expanded the system by adding two vocabulary learning modes (thematic flashcards and spaced-repetition cards) and a personal dictionary. Both algorithms were co-developed with the language school client — not copied from existing tools like Anki.  
+
+Next came the Reader service with free-reading and comprehension-test modes featuring automatic answer validation.  
+After that, the Video service appeared — online/offline lessons with quiz questions.  
+
+Both the Reader and Vocabulary services later received native Android versions alongside the web version.  
+A new service is under development — **interactive exercises (drag-and-drop and input fields)** with automatic validation.
 </details>
 
 ---
 
 ## 2. Overall Architecture
 
-### Architectural approach: 
+### Architectural approach
 <details>
-  <summary>Микросервисная событийно-ориентированная архитектура с Kafka и независимыми REST API.</summary>
-  
-Event-Driven Microservices Architecture (событийно-ориентированная микросервисная архитектура). Система построена как набор независимых микросервисов, обменивающихся событиями через Kafka. Каждый сервис имеет собственные API-эндпоинты и внутреннюю логику, может быть как producer, так и consumer. Большинство сервисов двунаправленные: они публикуют и обрабатывают события.
+  <summary>Event-Driven Microservices Architecture with Kafka and independent REST APIs.</summary>
+
+The system is built as a collection of independent microservices that communicate asynchronously through Kafka.  
+Each service has its own REST API and internal logic and may act as both producer and consumer.  
+Most services are bidirectional — they both publish and consume events.
 </details>
 
 ### Core principles
 <details>
-  <summary> Асинхронность, масштабируемость, независимость сервисов, слабая связанность и расширяемость через версии API и событий. (asynchronous, independent, scalable)</summary>
-  
-  **Core principles:**
-- Асинхронное взаимодействие между сервисами через Kafka.
-- Независимость модулей: каждый деплоится отдельно и имеет собственный код.
-- Масштабируемость: можно разворачивать и обновлять сервисы независимо.
-- Fault isolation: сбой одного микросервиса не останавливает систему.
-- Расширяемость через версии API и Kafka topics.
+  <summary>Asynchronous, scalable, independent, loosely coupled, and API/event version–driven.</summary>
+
+**Core principles:**
+- Asynchronous communication between services via Kafka.  
+- Independence: each module is deployed and maintained separately.  
+- Scalability: services can be independently scaled and updated.  
+- Fault isolation: a failure in one service doesn’t halt the system.  
+- Extensibility via versioned APIs and Kafka topics.
 </details>
 
 ### List of microservices and their short responsibilities
 <details>
-  <summary>Профиль, Лобби, Карточки, Читалка, Видео, Админ, PII и служебные сервисы, взаимодействующие через Kafka. Больше о каждом микросервисе в соответствующем разделе</summary>
-  
-- Profile Service — регистрация, логин, управление ролями, токенами и доступом.
-- Lobby Service — интерфейсная маршрутизация и список доступных “продуктов”.
-- Thematic Cards Service — карточки по темам с собственным алгоритмом повторения.
-- Learning Cards Service — карточки для изучения со вторым алгоритмом повторения.
-- Reader Service — режимы свободного чтения и тестов на понимание.
-- Listening Service — видеоуроки и видео-тесты с вопросами.
-- Admin Service — редактирование и ручное создание контента.
-- PII Service — отдельный сервис для хранения и шифрования персональных данных.
-- Content Utility Services — служебные модули (аналитика, рассылки, cron-события).
+  <summary>Profile, Lobby, Cards, Reader, Video, Admin, PII, and utility services interacting via Kafka.</summary>
+
+- **Profile Service** — registration, login, roles, tokens, and access management.  
+- **Lobby Service** — interface router and list of available “products.”  
+- **Thematic Cards Service** — topic-based flashcards with a custom repetition algorithm.  
+- **Learning Cards Service** — personal vocabulary flashcards with another repetition algorithm.  
+- **Reader Service** — free reading and comprehension-test modes.  
+- **Listening Service** — video lessons and video quizzes.  
+- **Admin Service** — content editing and manual content creation.  
+- **PII Service** — isolated storage and encryption of personal data.  
+- **Content Utility Services** — supporting modules (analytics, mailings, cron events).
 </details>
 
 ### System overview / Async flows
 <details>
-  <summary>Angular, Bun, AWS и Kafka обеспечивают связность между клиентами и микросервисами без центрального монолита.</summary>
-  
-Мобильное (Cordova), десктопное (Electron) и веб-приложение (Angular) используют единый REST-бэк на Bun./
-Коммуникация между микросервисами — через Kafka./
-Все данные хранятся в PostgreSQL (аутентификация) и MongoDB (контент)./
-Мультимедиа (аудио, видео, изображения) — на AWS S3./
+  <summary>Angular, Bun, AWS, and Kafka connect all clients and microservices without a central monolith.</summary>
+
+Mobile (Cordova), desktop (Electron), and web (Angular) clients share a single REST backend built on Bun.  
+Communication between microservices occurs via Kafka.  
+Data is stored in PostgreSQL (authentication) and MongoDB (content).  
+Media (audio, video, images) are stored in AWS S3.
 
 **Key asynchronous flows:**
-- Пользователь создаётся в Profile Service → событие user.created → обновление других сервисов.
-- Обновление карточек или текстов → событие content.updated → синхронизация у всех клиентов.
-- Cron-события (например, еженедельное обновление когорт) → глобальные Kafka-ивенты.
+- User created in Profile Service → `user.created` event → updates in other services.  
+- Cards or texts updated → `content.updated` event → client synchronization.  
+- Cron events (e.g., weekly cohort updates) → global Kafka system events.
 </details>
 
 ### Architecture diagram
 <details>
   <summary>diagram (optional)</summary>
-  
-Общая архитектура микросервисов и Kafka-взаимодействий
-  ``` 
-  --- СХЕМА ---
-  ```
+
+Overall architecture of microservices and Kafka interactions  
+--- DIAGRAM ---
 </details>
 
 ---
@@ -98,470 +118,455 @@ Event-Driven Microservices Architecture (событийно-ориентиров
 
 ### Frontend
 <details>
-  <summary>Angular + Material + Zustand с поддержкой Cordova и Electron.</summary>
-  
+  <summary>Angular + Material + Zustand with Cordova and Electron support.</summary>
+
 **Frontend**
-- Angular (TypeScript) — основной SPA-клиент (web).
-- Angular Router (@angular/router) — маршрутизация.
-- Angular Material — UI-компоненты в качестве UI-библиотеки. Все интерфейсы построены на её готовых компонентах и стилях.
-- Angular CDK (Drag & Drop) — онлайн-упражнения с перетаскиванием и input-полями.
-- Zustand — стейт-менеджмент на клиенте (кеш ролей, токенов, состояний модулей).
-- Electron — десктопная сборка на базе Angular.
-- Cordova (Android) — нативный Android-билд на базе веб-клиента.
+- **Angular (TypeScript)** — main SPA client (web).  
+- **Angular Router (@angular/router)** — navigation and routing.  
+- **Angular Material** — UI library; all interfaces use its components and styling.  
+- **Angular CDK (Drag & Drop)** — interactive online exercises with drag-and-drop and input fields.  
+- **Zustand** — client-side state management (role, token, and module state cache).  
+- **Electron** — desktop build based on Angular.  
+- **Cordova (Android)** — native Android build based on the web client.
 </details>
 
 ### Backend
-<details> 
-<summary>Bun с REST API и событийной архитектурой (EDA) с поддержкой версионирования API и событий.</summary> 
-  
-Бэкенд реализован на <b>Bun</b> с использованием TypeScript. Каждый микросервис имеет собственный REST API с маршрутами вида <code>/api/v1</code>, <code>/api/v2</code>, что обеспечивает независимую эволюцию версий. Архитектура построена по принципу <b>Event-Driven Architecture (EDA)</b> — микросервисы взаимодействуют асинхронно через события, публикуемые и обрабатываемые в Kafka. Большинство сервисов являются одновременно producer и consumer, что повышает гибкость системы. Проверка версии клиента выполняется при каждой авторизации: если клиент не поддерживает новые функции, ему показывается сообщение о необходимости обновления. 
+<details>
+  <summary>Bun with REST API and Event-Driven Architecture (EDA) supporting versioned APIs and events.</summary>
+
+The backend is implemented in **Bun** using **TypeScript**.  
+Each microservice exposes its own REST API (e.g., `/api/v1`, `/api/v2`), ensuring independent evolution of versions.  
+Architecture follows the **Event-Driven Architecture (EDA)** model — microservices communicate asynchronously via Kafka.  
+Most services act as both producers and consumers, providing flexibility.  
+Client version is verified at each login: outdated clients receive an update prompt.
 </details>
 
 ### Messaging
-<details> 
-<summary>Apache Kafka + Schema Registry обеспечивают обмен событиями и контроль совместимости схем.</summary> 
-  
-<b>Kafka</b> выступает центральным брокером сообщений между микросервисами. Все события публикуются в версионированные топики (<code>*.v1</code>, <code>*.v2</code>). Для проверки структур сообщений используется <b>Schema Registry</b>, где хранится история версий (1, 2, 3 …) и обеспечивается совместимость <i>backward/forward</i>. Топики защищены через <b>SASL_SSL</b> и ACL-права доступа. В системе также используются служебные события — обновления контента, изменения профиля и плановые cron-события. 
+<details>
+  <summary>Apache Kafka + Schema Registry ensure event exchange and schema compatibility control.</summary>
+
+**Kafka** is the central message broker between microservices.  
+All events are published to versioned topics (`*.v1`, `*.v2`).  
+A **Schema Registry** validates and stores schema versions (1, 2, 3, …), maintaining backward/forward compatibility.  
+Topics are secured via **SASL_SSL** and ACL access rights.  
+System events include content updates, profile changes, and scheduled cron operations.
 </details>
 
 ### Databases
 <details>
-  <summary>PostgreSQL для авторизации, MongoDB для контента, AWS S3 для мультимедиа.</summary>
-  
-**PostgreSQL** — аутентификация/авторизация (данные профиля).
-**MongoDB** — учебный контент и прогресс:
-- Глобальный словарь; Индивидуальные словари;
-- Тексты читалки: встроенная библиотека (по темам/уровням) и пользовательские тексты (отдельные базы/коллекции);
-- Тексты для тестового режима;
-- Тесты к видео.
+  <summary>PostgreSQL for auth, MongoDB for content, AWS S3 for media.</summary>
 
-**Кэширование:**
-- Клиент: LocalStorage (Access/Refresh токены, роль).
-- Сервер: in-memory per service (сессии, циклы, недели, когорты слов, «точка продолжения» для быстрого возврата в сохранённое состояние).
+**PostgreSQL** — authentication/authorization (profile data).  
+**MongoDB** — educational content and progress:
+- Global dictionary; personal dictionaries;  
+- Reader texts: built-in library (by topics/levels) and user-imported texts (separate collections);  
+- Comprehension test texts;  
+- Video quiz content.
+
+**Caching:**
+- **Client:** LocalStorage (Access/Refresh tokens, role).  
+- **Server:** In-memory per service (sessions, cycles, weeks, word cohorts, “resume points”).
 
 **Media & Files**
-**AWS S3** — хранение медиа по сервисам (изолированные бакеты/префиксы; допускаются дубли для независимости).
-(Опционально) **CloudFront** — CDN для видео/изображений.
-**Pre-signed URLs** — временный доступ к приватным медиа.
-**Видео в десктоп-версии** — зашифрованы и не лежат «в открытую» в архиве приложения.
+- **AWS S3** — isolated buckets/prefixes for each service (duplicates allowed for independence).  
+- *(Optional)* **CloudFront** — CDN for videos/images.  
+- **Pre-signed URLs** — temporary access to private media.  
+- **Desktop videos** — encrypted and not stored openly inside the app bundle.
 </details>
 
 ### Deployment, DevOps & Delivery
 <details>
   <summary>Docker Compose + AWS</summary>
-  
-**GitHub** (mono-org, multi-repo) — отдельные репозитории фронта/бэка на каждый сервис.
-**CI/CD** — автодеплой на AWS при пуше в main (каждый сервис независимо).
-**Docker Compose** — сборка и запуск контейнеров.
-**Среды:** local, production (staging в планах).
+
+**GitHub** (mono-org, multi-repo) — separate repos for frontend/backend of each service.  
+**CI/CD** — automatic deployment to AWS on push to `main`.  
+**Docker Compose** — container build and orchestration.  
+**Environments:** local, production (staging planned).
 </details>
 
-### Desktop & Mobile: 
+### Desktop & Mobile
 <details>
-<summary>Desktop — Electron</summary>
-  
-Десктопная версия создаётся с помощью <b>Electron</b> на базе существующего Angular-фронтенда. Приложение использует общий REST API Bun-сервера и синхронизируется с той же базой данных, что и веб-клиент. Видео-контент в десктоп-версии зашифрован и хранится в бинарном виде — исходные файлы не входят в сборку. Electron-клиент поддерживает офлайн-режим и локальное кэширование прогресса, а при подключении к сети синхронизирует результаты с сервером. 
+  <summary>Desktop — Electron</summary>
+
+The desktop version is built using **Electron** on top of the existing Angular frontend.  
+It uses the same REST API and databases as the web client.  
+Videos in the desktop build are **encrypted** and stored in binary form, excluded from the app archive for security.  
+Electron supports offline mode with local progress caching, synchronizing results when back online.
 </details>
 
 <details>
-<summary>Mobile — Cordova</summary>
-  Мобильная версия собирается через <b>Apache Cordova</b> на основе того же Angular-кода. Сборка осуществляется в Android Studio, в результате чего получается нативный Android-билд. Cordova-клиент обращается к общему REST API и использует единый набор токенов и ролей, что обеспечивает полную синхронизацию данных с веб-версией. Архитектура единая, и мобильная (через Cordova) и веб-версии — это фронтенд-клиенты, работающие с одним REST API на Bun и общей базой данных (PostgreSQL + MongoDB).
-  
-  Поддерживается кеширование и частичная работа офлайн с последующей синхронизацией при появлении соединения.
-Иными словами мы получаем веб-приложение (Angular + TypeScript), упакованное в нативный Android-билд. Такой подход даёт нам «нативный» APK, но код остаётся кроссплатформенным.
+  <summary>Mobile — Cordova</summary>
+
+The mobile version is built using **Apache Cordova** based on the same Angular codebase.  
+The build is generated in Android Studio, producing a native Android APK.  
+Cordova clients access the same REST API and share the same tokens and roles as the web app, ensuring full data synchronization.  
+
+Offline mode with caching is supported, with progress synchronization upon reconnecting.  
+In essence, it’s a web application (Angular + TypeScript) packaged as a native Android build — keeping the codebase fully cross-platform.
 </details>
 
-### Monitoring 
+### Monitoring
 <details>
   <summary>ELK, Prometheus + Grafana</summary>
-  
-Observability
-**ELK (Elasticsearch + Logstash + Kibana)** — application/system logs.
-**Kafka + S3** — event logs (бизнес-события, долговременный архив).
-**Prometheus + Grafana** — метрики/трейсы (latency, throughput, offsets, consumer lag).
 
+**Observability stack:**  
+- **ELK (Elasticsearch + Logstash + Kibana)** — application/system logs.  
+- **Kafka + S3** — event logs (business events, long-term archive).  
+- **Prometheus + Grafana** — metrics/traces (latency, throughput, offsets, consumer lag).
 </details>
 
 ### Security
-**Пароли** — Argon2 (хеширование).
-**PII** — шифрование AES-256-GCM на уровне приложения; ключи в AWS Secrets Manager.
-**JWT** — Access (15 мин) + Refresh (7 дней), хранение в LocalStorage; эндпоинты обновления.
-**Транспорт** — TLS 1.3, приватные сети в AWS VPC, Security Groups.
-**Kafka** — SASL_SSL + аутентификация по сертификатам.
-**GDPR-ready** — экспорт/удаление данных, аудит доступа (события в Kafka).
-
----
+**Passwords** — Argon2 (hashing).  
+**PII** — AES-256-GCM encryption at application level; keys stored in AWS Secrets Manager.  
+**JWT** — Access (15 min) + Refresh (7 days), stored in LocalStorage; refresh endpoints available.  
+**Transport** — TLS 1.3, AWS VPC private networks, Security Groups.  
+**Kafka** — SASL_SSL + certificate authentication.  
+**GDPR-ready** — export/delete endpoints, access audit (Kafka events).
 
 ## 4. Users and Roles
-Система ролей централизована и управляется сервисом Profile. После авторизации пользователь получает JWT-токен, в котором зашифрована его роль. Все сервисы считывают эту роль и на её основе определяют уровень доступа.
 
-### Roles 
+The role system is centralized and managed by the **Profile Service**.  
+After authentication, a user receives a **JWT token** containing their role.  
+All services read this role and determine the level of access accordingly.
+
+### Roles
 <details>
-  <summary>List of Roles(Technical Admin, Educational Admin, Teacher, Student)</summary>
-  
-**1. Technical Admin**
-- Полный контроль над инфраструктурой (Kafka, базы, деплой, конфигурации).
-- Имеет доступ к логам, мониторингу и настройкам безопасности.
-- Может создавать и удалять пользователей.
+  <summary>List of Roles (Technical Admin, Educational Admin, Teacher, Student)</summary>
 
-**2. Educational Admin (админ-преподаватель)**
-- Отвечает за учебный контент и роли пользователей.
-- Загружает встроенные тексты и тесты (общие для всех).
-- Назначает учителей и учеников, управляет их доступами.
-- Имеет доступ к административному интерфейсу Admin Service.
+**1. Technical Admin**
+- Full control over infrastructure (Kafka, databases, deployment, configurations).  
+- Has access to logs, monitoring, and security settings.  
+- Can create and delete users.
+
+**2. Educational Admin (Admin-Teacher)**
+- Responsible for educational content and user roles.  
+- Uploads built-in texts and tests (shared for all).  
+- Assigns teachers and students, manages their access.  
+- Has access to the administrative interface of the **Admin Service**.
 
 **3. Teacher**
-- Имеет доступ к своим ученикам (связка “учитель ↔ ученики”).
-- Просматривает аналитику их прогресса, результаты тестов и чтения.
-- Имеет права только на чтение, не редактирует контент.
+- Has access to their assigned students (teacher ↔ students linkage).  
+- Views analytics of their students’ progress, reading and test results.  
+- Read-only permissions, cannot edit content.
 
 **4. Student**
-- Основной пользователь системы.
-- Работает с карточками, читает тексты, выполняет тесты.
-- Прогресс сохраняется и синхронизируется между устройствами.
+- Primary user of the system.  
+- Works with cards, reads texts, completes tests.  
+- Progress is saved and synchronized across devices.
 </details>
 
 ### Description of permissions and access zones
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Summary</summary>
+  (Content to be defined)
 </details>
 
-### Authentication and authorization service 
+### Authentication and authorization service
 <details>
   <summary>(Profile Service, JWT, Argon2, Refresh Tokens)</summary>
-  
+
 **Authentication & Authorization**
-- Регистрация и логин через Profile Service.
-- Пароли хешируются через Argon2, данные хранятся в PostgreSQL.
-- После успешного входа выдается:
-> Access Token (15 минут активности)
-> Refresh Token (7 дней)
-- Токены хранятся в LocalStorage и обновляются через выделенные эндпоинты.
-- Refresh токены зашифрованы с помощью AES-256.
-- Привязка осуществляется к конкретному устройству и сессии.
+- Registration and login handled by **Profile Service**.  
+- Passwords are hashed using **Argon2** and stored in PostgreSQL.  
+- After successful login, the user receives:
+  > Access Token (15 minutes of activity)  
+  > Refresh Token (7 days)
+
+- Tokens are stored in LocalStorage and refreshed through dedicated endpoints.  
+- Refresh tokens are encrypted using AES-256.  
+- Tokens are device- and session-specific.
 </details>
 
-**Дополнитеьлно - Lobby Service**
-- Сервис “Лобби” доступен всем ролям после входа через Profile Service.
-- Является интерфейсным маршрутизатором — показывает пользователю доступные микросервисы (“продукты”) согласно его роли.
-- Не управляет ролями, а только читает их из JWT.
-- Обеспечивает согласованный пользовательский сценарий навигации между модулями системы.
+**Additionally – Lobby Service**
+- The **Lobby Service** is available to all roles after logging in via Profile Service.  
+- It acts as an interface router — showing the user which microservices (“products”) are available according to their role.  
+- It does not manage roles, only reads them from the JWT.  
+- Provides consistent navigation between modules of the system.
 
 ---
 
 ## 5. Microservice Descriptions
-У проекта микросервисная событийная архитектура с использованием Kafka как брокера сообщений, где:
-- каждый сервис обменивается событиями через Kafka;
-- каждый сервис имеет собственные API-эндпоинты;
-- часть сервисов выступает только как продюсеры (отправляют события);
-- большинство — как продюсеры и консьюмеры одновременно (отправляют и обрабатывают события);
-- есть пользовательские микросервисы (например, Читалка, Словарь, Видео) и служебные (например, логирование, аналитика, рассылка, синхронизация).
-- каждый сервис имеет независимые медиа - картинки, аудио, видео, текста - и хранит их на AWS. Сервис не видит данные соседнего сервиса и из-за этого могут быть дубли. Зато сервисы независимые.
 
-Каждый микросервис обменивается событиями (publish/subscribe), что обеспечивает асинхронность, масштабируемость и слабую связанность компонентов.
+The project uses a **microservice event-driven architecture** with **Kafka** as the message broker, where:
+- Each service exchanges events through Kafka;  
+- Each service exposes its own API endpoints;  
+- Some services act only as producers (sending events);  
+- Most are both producers and consumers (sending and processing events);  
+- There are user-facing services (Reader, Vocabulary, Video) and utility ones (logging, analytics, mailings, synchronization);  
+- Each service stores its own media (images, audio, video, texts) on AWS S3 — independent and isolated.  
+  Services do not see each other’s data, allowing for duplication but complete independence.
 
-### microservice schema
+Each microservice communicates via **publish/subscribe**, ensuring **asynchronicity**, **scalability**, and **loose coupling**.
+
+### Microservice schema
 <details>
   <summary>(Examples: Profile, Lobby, Thematic Cards, Learning Cards, Reader, Video Tests, Admin, PII)</summary>
-  
---- ТУТ БУДЕТ СХЕМА: взаимодействие микросервисов (события, API, Kafka topics) ---
+
+--- DIAGRAM HERE: microservice interaction (events, API, Kafka topics) ---
 </details>
 
-#### Profile microservice.
+#### Profile microservice
 <details>
-  <summary>Profile - Регистрация, логин, управление ролями, токенами и версиями клиентов. Центр аутентификации и авторизации. Отвечает за создание пользователей, хеширование паролей (Argon2), выдачу Access/Refresh токенов и проверку версии клиента. Хранит данные в PostgreSQL и публикует события `user.created`, `user.updated`, `user.roleChanged` в Kafka.</summary>
-  
-##### Purpose
-Центральный сервис для регистрации, логина, управления ролями и токенами. Регистрация, авторизация, управление ролями и токенами.
+  <summary>Profile – Registration, login, role and token management, and client version control. Central service for authentication and authorization. Stores data in PostgreSQL and publishes `user.created`, `user.updated`, and `user.roleChanged` events to Kafka.</summary>
 
-**Функции:**
-- Регистрация нового пользователя и хэширование пароля через Argon2.
-- Авторизация, выдача Access/Refresh токенов.
-- Хранение пользователей и ролей в PostgreSQL.
-- Эндпоинты для обновления токенов и проверки актуальности версии клиента.
-- Отправка событий в Kafka (user.created, user.updated, user.roleChanged).
+##### Purpose
+Central service for registration, login, role, and token management.
+
+**Functions:**
+- Register new users and hash passwords via **Argon2**.  
+- Authenticate users and issue Access/Refresh tokens.  
+- Store users and roles in PostgreSQL.  
+- Provide endpoints for token refresh and client version validation.  
+- Publish Kafka events: `user.created`, `user.updated`, `user.roleChanged`.
 
 ##### Main API endpoints
-Здесь описание первой темы.
- 
-##### Kafka events (topics, schemas, version)
-**Kafka topics:**
-- ser.events.v2
-- user.security.v1
-
-**schemas**
-- ЧТО?
-- ЧТО?
-
-**version**
-- ЧТО?
-- ЧТО?
-
-##### Databases and collections used
-PostgreSQL (таблицы users, roles, tokens).
-
-##### External integrations (AWS S3, Secrets Manager, etc.)
-НЕТ ОПИСАНИЯ
-</details>
-
-#### Lobby microservice.
-<details>
-  <summary>Lobby - Интерфейсная точка входа в систему, отображающая пользователю доступные продукты по роли. После входа через Profile Service пользователь попадает в Лобби, где видит все доступные модули. Lobby не управляет ролями, а только маршрутизирует и кэширует навигацию.</summary>
-  
-##### Purpose
- Панель навигации по продуктам и интерфейсный маршрутизатор. Единая точка входа для пользователей после входа в систему.
-
-**Функции:**
-- Отображает список доступных микросервисов в зависимости от роли.
-- Хранит состояние выбора пользователя и контекст навигации.
-- Получает данные о доступных сервисах по REST API от Profile Service.
-
-**Особенности:**
-- Не управляет ролями — только визуализирует доступные модули.
-- В будущем может быть расширен как менеджер маршрутов между микросервисами.
-
-##### Main API endpoints
-НЕТ ОПИСАНИЯ
+*(To be filled)*
 
 ##### Kafka events (topics, schemas, version)
 **Kafka topics:**
-- ui.navigation.v1 (прослушивает системные изменения доступов).
+- `user.events.v2`  
+- `user.security.v1`
 
-**schemas**
-- ЧТО?
-- ЧТО?
-
-**version**
-- ЧТО?
-- ЧТО?
+**Schemas:** TBD  
+**Versioning:** TBD
 
 ##### Databases and collections used
-НЕТ ОПИСАНИЯ
+PostgreSQL (`users`, `roles`, `tokens`).
 
 ##### External integrations (AWS S3, Secrets Manager, etc.)
-НЕТ ОПИСАНИЯ
+*(None yet described)*
 </details>
 
-#### Thematic Cards microservice.
+#### Lobby microservice
 <details>
-  <summary>Thematic Cards - Карточки по темам с уникальным алгоритмом повторения и статистикой обучения. Сервис объединяет тематические словари и позволяет учить слова по уровням. Алгоритм повторения разработан совместно с языковой школой. Прогресс сохраняется в MongoDB, обновления отправляются через Kafka.</summary>
-  
+  <summary>Lobby – Entry point to the system UI that displays available products per user role. After authentication, the user lands here and sees accessible modules. It only routes and caches navigation data.</summary>
+
 ##### Purpose
-Сервис изучения слов по темам с уникальным алгоритмом повторения. Один их двух независимых модулей карточек с разными алгоритмами повторения и статистикой.
+Navigation hub and interface router — single entry point for users after login.
 
-**Функции:**
-- Отображение карточек, группированных по темам и уровням сложности.
-- Алгоритм повторения, разработанный совместно с языковой школой-заказчиком.
-- Отслеживание статистики по темам и прогрессу пользователя.
-- Возможность синхронизации индивидуального словаря.
+**Functions:**
+- Displays available microservices depending on user role.  
+- Stores user selection state and navigation context.  
+- Fetches available service data via REST from Profile Service.
 
-**В микросервисах (Bun):**
-- сервис имеет свой локальный кэш в памяти;
-- кэшируются временные данные — циклы, активные сессии, недели, когорты слов, и т.п.;
-- обновление кэша происходит автоматически по событиям Kafka или по cron-задачам.
+**Features:**
+- Does not manage roles — only visualizes accessible modules.  
+- Future plan: evolve into a cross-service route manager.
 
 ##### Main API endpoints
-НЕТ ОПИСАНИЯ
- 
+*(To be filled)*
+
 ##### Kafka events (topics, schemas, version)
 **Kafka topics:**
-- vocab.cards.v1
-- vocab.progress.v1
+- `ui.navigation.v1` (listens to access-change events)
 
-**schemas**
-- ЧТО?
-- ЧТО?
-
-**version**
-- ЧТО?
-- ЧТО?
+**Schemas:** TBD  
+**Versioning:** TBD
 
 ##### Databases and collections used
-MongoDB (коллекции topics, words, userProgress).
- 
+*(None)*
+
 ##### External integrations (AWS S3, Secrets Manager, etc.)
-НЕТ ОПИСАНИЯ
+*(None)*
 </details>
 
-#### Learning Cards microservice.
+#### Thematic Cards microservice
 <details>
-  <summary>Learning Cards - Индивидуальные карточки для повторения слов и формирования персонального словаря. Пользователь создаёт собственные списки слов, сервис формирует когорты и циклы обучения. Каждую неделю запускается cron-задача `updateLearningCohorts()`, обновляющая словари всех пользователей.</summary>
-  
+  <summary>Thematic Cards – Topic-based vocabulary cards with a unique repetition algorithm and learning statistics. Integrates thematic dictionaries and tracks user progress. Synchronizes via Kafka.</summary>
+
 ##### Purpose
-Один их двух независимых модулей карточек с разными алгоритмами повторения и статистикой. Индивидуальные карточки для повторения слов и формирования персонального словаря, с собственным алгоритмом и недельным обновлением. Этот сервис отвечает за персонализированное обучение словарю. Пользователь формирует индивидуальный набор слов, а система группирует их по когортам и неделям. Каждую неделю по понедельникам запускается cron-задача <code>updateLearningCohorts()</code>, обновляющая активные слова для всех пользователей. Сервис использует MongoDB (коллекции <code>userWords</code> и <code>schedule</code>) и обменивается событиями через Kafka-топики <code>learning.cards.v1</code> и <code>learning.schedule.v1</code>.
+A vocabulary-learning service organized by topic and difficulty level.  
+One of two independent card modules with distinct repetition algorithms.
 
-**Функции:**
-- Создание и хранение персональных словарей.
-- Подбор слов по когортам и неделям обучения.
-- Еженедельное обновление словарей (через cron-задачу).
-- Возможность офлайн-доступа (через кэш и синхронизацию).
+**Functions:**
+- Display cards grouped by topics and difficulty.  
+- Use a custom repetition algorithm developed with the language school client.  
+- Track topic-level statistics and user progress.  
+- Sync with the personal dictionary service.
 
-**В микросервисах (Bun):**
-- сервис имеет свой локальный кэш в памяти;
-- кэшируются временные данные — циклы, активные сессии, недели, когорты слов, и т.п.;
-- обновление кэша происходит автоматически по событиям Kafka или по cron-задачам.
-  
+**In microservice (Bun):**
+- Maintains an in-memory cache for temporary data (sessions, cycles, word cohorts).  
+- Cache updates automatically via Kafka events or scheduled cron tasks.
+
 ##### Main API endpoints
-НЕТ ОПИСАНИЯ
- 
+*(To be filled)*
+
 ##### Kafka events (topics, schemas, version)
 **Kafka topics:**
-- learning.cards.v1
-- learning.schedule.v1
- 
-**schemas**
-- ЧТО?
-- ЧТО?
+- `vocab.cards.v1`  
+- `vocab.progress.v1`
 
-**version**
-- ЧТО?
-- ЧТО?
-
-##### Cron-задачи:
-- updateLearningCohorts() — выполняется по понедельникам для всех пользователей.
+**Schemas:** TBD  
+**Versioning:** TBD
 
 ##### Databases and collections used
-- MongoDB (коллекции userWords, schedule).
+MongoDB (`topics`, `words`, `userProgress`).
 
-##### External integrations (AWS S3, Secrets Manager, etc.)
-НЕТ ОПИСАНИЯ
+##### External integrations
+*(None yet described)*
 </details>
 
-#### Reader microservice.
+#### Learning Cards microservice
 <details>
-  <summary>Reader - "Читалка" текстов с тремя режимами для свободного чтения и контроля, тестирования понимания. Хранит три типа текстов: встроенные тематические, пользовательские (импортируемые) и тестовые. Автоматически проверяет ответы и сохраняет результаты. Использует отдельные Mongo-базы для разных типов контента.</summary>
-  
-##### Purpose
-Режим чтения текстов и тестов на понимание прочитанного. Свободное чтение и тесты на понимание; три типа текстов (дефолтные, пользовательские, тестовые).
+  <summary>Learning Cards – Personal flashcards for word repetition and vocabulary building. Each week a cron job `updateLearningCohorts()` refreshes active words for all users. Publishes progress and schedule events to Kafka.</summary>
 
-**Функции:**
-- Два режима: свободное чтение и тестирование.
-- Хранение трёх типов текстов:
-- Встроенная библиотека. Дефолтные тексты, учебник, общие для всех пользователей, разбитые по по темам и уровням подготовки;
-- Пользовательские тексты - импортируемые каждыйм пользователем самостоятельно, — каждый пользователь имеет импортировать текста; хранятся в отдельной базе MongoDB. Ими нельзя делиться с другими пользователями. Нельзя редактировать. Можно только полностью удалить из базы, "хард делит". 
-- Тексты для тестового режима — общие, встроенные для всех пользователей, тоже в MongoDB, но в отдельной коллекции. редактируемые. 
-- Автоматическая проверка тестов, осуществляется за счет слечения ответов пользователя с проверочными ответами.
+##### Purpose
+The second vocabulary module — personalized flashcards for repetition and progress tracking.  
+Users build personal word lists grouped into weekly cohorts.
+
+**Functions:**
+- Create and store personal dictionaries.  
+- Assign words to weekly learning cohorts.  
+- Update weekly via cron job `updateLearningCohorts()` (every Monday).  
+- Support offline caching and later sync.
+
+**In microservice (Bun):**
+- Maintains an in-memory cache (cycles, active sessions, cohorts).  
+- Auto-updates cache via Kafka or cron tasks.
 
 ##### Main API endpoints
-НЕТ ОПИСАНИЯ
-  
+*(To be filled)*
+
 ##### Kafka events (topics, schemas, version)
 **Kafka topics:**
-- reader.events.v1
-- reader.content.v2
-  
-**schemas**
-- ЧТО?
-- ЧТО?
+- `learning.cards.v1`  
+- `learning.schedule.v1`
 
-**version**
-- ЧТО?
-- ЧТО?
+**Schemas:** TBD  
+**Versioning:** TBD
+
+##### Cron jobs
+- `updateLearningCohorts()` — runs weekly (Monday).
 
 ##### Databases and collections used
-**Две независимые базы MongoDB:**
-- для дефолтных текстов;
-- для пользовательских текстов.
+MongoDB (`userWords`, `schedule`).
 
-##### External integrations (AWS S3, Secrets Manager, etc.)
-  НЕТ ОПИСАНИЯ
+##### External integrations
+*(None yet described)*
 </details>
 
-#### Listening microservice.
+#### Reader microservice
 <details>
-  <summary>Listening (Video Tests) - Видео с вопросами, автопроверкой ответов и синхронизацией прогресса. Работает с зашифрованными видео на AWS S3. В десктоп-версии видео хранятся в бинарном виде, в вебе — по pre-signed URL. Результаты тестов и события (`video.results.v1`) публикуются в Kafka.</summary>
-
-Веб-версия использует видео, хранящиеся на AWS (вероятно, S3, но сервис можно уточнить позже). Видео подгружаются динамически для обучения и тестов.
-
-Десктоп-версия (через Electron) содержит только тестовый режим, где видео:
-- зашифрованы,
-- представлены в виде булевых потоков (возможно, бинарных данных, расшифровываемых локально),
-- не содержатся напрямую в архиве приложения, что повышает безопасность и защищает контент.
-Таким образом, десктопная сборка работает офлайн, но с ограниченным функционалом — без открытого видеодоступа.
+  <summary>Reader – “Reader” service with free-reading and comprehension-test modes. Stores three types of texts: built-in, user-imported, and test-based. Performs automatic answer validation and progress saving.</summary>
 
 ##### Purpose
-Интерактивные видео с вопросами и автоматической проверкой. Видео с вопросами и автопроверкой, поддержка шифрования и офлайн-доступа.
+Text reading and comprehension testing module.  
+Supports free-reading and quiz modes.
 
-**Функции:**
-- Встроенный видеоплеер (web) и шифрованные бинарные потоки (desktop).
-- Видео хранятся на AWS S3, доступ — через pre-signed URLs.
-- В десктоп-версии (Electron) видео зашифрованы и не лежат в исходном архиве.
-- Генерация результатов тестов и отправка событий прогресса.
+**Functions:**
+- Two main modes: free reading and comprehension testing.  
+- Stores three types of texts:
+  - **Built-in library:** shared texts grouped by topics and levels.  
+  - **User-imported texts:** each user can import their own; stored in separate MongoDB databases; cannot be edited or shared, only permanently deleted.  
+  - **Test texts:** shared test materials with editable answers.
+
+- Automatic validation by comparing user responses with stored correct answers.
 
 ##### Main API endpoints
-НЕТ ОПИСАНИЯ
-  
+*(To be filled)*
+
 ##### Kafka events (topics, schemas, version)
 **Kafka topics:**
-- video.events.v1
-- video.results.v1
-   
-**schemas**
-- ЧТО?
-- ЧТО?
+- `reader.events.v1`  
+- `reader.content.v2`
 
-**version**
-- ЧТО?
-- ЧТО?
+**Schemas:** TBD  
+**Versioning:** TBD
 
 ##### Databases and collections used
-- MongoDB (коллекции videos, questions, results).
- 
-##### External integrations (AWS S3, Secrets Manager, etc.)
-НЕТ ОПИСАНИЯ
+Two independent MongoDB databases:
+- Built-in texts  
+- User-imported texts
+
+##### External integrations
+*(None yet described)*
 </details>
 
-#### Admin microservice.
+#### Listening microservice
 <details>
-  <summary>Admin - Создание и редактирование учебного контента через визуальный интерфейс. Доступен только администраторам-преподавателям. Позволяет добавлять тексты, карточки, тесты и метаданные. Публикует события `content.updated`, которые обновляют кэш в других сервисах.</summary>
-  
-##### Purpose
-Редактирование и ручное создание контента преподавателями (Educational Admin). Редактирование и создание контента админом-преподавателем через UI. Безопасность обеспечивается через JWT-авторизацию и роль “Учебный админ”, выданную сервисом “Профиль”. Сервис не имеет прямого доступа к пользовательским данным, а работает только с контентом.
+  <summary>Listening (Video Tests) – Interactive videos with quiz questions and automatic result validation. Works with encrypted videos stored on AWS S3. Desktop version uses binary encrypted streams. Publishes results via Kafka.</summary>
 
-**Функции:**
-- Создание и редактирование тестов, карточек, текстов (Доступно только для одной роли).
-- Управление статусами контента и метаданными.
-- Визуальный UI для модификации MongoDB-записей без прямого доступа к базе.
-- Публикация обновлений контента через Kafka (content.updated).
+##### Purpose
+Interactive videos with questions and automated checking.  
+Supports encrypted offline playback on desktop.
+
+**Functions:**
+- Built-in video player (web) and binary encrypted streams (desktop).  
+- Videos hosted on AWS S3 with pre-signed URL access.  
+- Desktop version stores encrypted binaries, not open files.  
+- Publishes test results and progress events to Kafka.
 
 ##### Main API endpoints
-НЕТ ОПИСАНИЯ
-  
-##### Kafka events (topics, schemas, version)
-НЕТ ОПИСАНИЯ
- 
-##### Databases and collections used
-- MongoDB (коллекции content, metadata).
+*(To be filled)*
 
-##### External integrations (AWS S3, Secrets Manager, etc.)
-НЕТ ОПИСАНИЯ
+##### Kafka events (topics, schemas, version)
+**Kafka topics:**
+- `video.events.v1`  
+- `video.results.v1`
+
+**Schemas:** TBD  
+**Versioning:** TBD
+
+##### Databases and collections used
+MongoDB (`videos`, `questions`, `results`).
+
+##### External integrations
+*(AWS S3, encryption management — TBD)*
 </details>
 
-#### PII microservice.
+#### Admin microservice
 <details>
-  <summary>PII - Изолированное хранение и шифрование персональных данных пользователей. Хранит PII в PostgreSQL, шифрует данные AES-256-GCM, ключи — в AWS Secrets Manager. Ведёт журнал обращений в Kafka (`pii.access.log`) и реализует GDPR-эндпоинты `/export` и `/delete`.</summary>
-  
-##### Purpose
-Безопасное хранение и шифрование персональных данных (PII). Изолированное шифрованное хранение персональных данных и аудит доступа.
+  <summary>Admin – Content creation and editing interface for administrators. Accessible only to Educational Admins. Publishes `content.updated` events to refresh caches across services.</summary>
 
-**Функции:**
-- Изолированное хранение имени, email, даты рождения и других PII-полей.
-- Шифрование AES-256-GCM на уровне Bun-приложения.
-- Ключи хранятся в AWS Secrets Manager, ротация каждые 90 дней.
-- Ведение журнала доступа через Kafka (pii.access.log).
+##### Purpose
+Admin interface for Educational Admins to create and edit educational content.  
+Secure access controlled via JWT and “Educational Admin” role.  
+Does not access user data — operates solely on content.
+
+**Functions:**
+- Create and edit tests, cards, texts.  
+- Manage content status and metadata.  
+- Provide visual UI for MongoDB modification without direct DB access.  
+- Publish updates via Kafka (`content.updated`).
 
 ##### Main API endpoints
-НЕТ ОПИСАНИЯ
-  
+*(To be filled)*
+
 ##### Kafka events (topics, schemas, version)
-НЕТ ОПИСАНИЯ
+*(To be filled)*
 
 ##### Databases and collections used
-- PostgreSQL (шифрованные поля).
+MongoDB (`content`, `metadata`).
 
-##### External integrations (AWS S3, Secrets Manager, etc.)
-НЕТ ОПИСАНИЯ
+##### External integrations
+*(None yet described)*
+</details>
+
+#### PII microservice
+<details>
+  <summary>PII – Isolated storage and encryption of personal data. Stores encrypted fields in PostgreSQL (AES-256-GCM). Manages key rotation via AWS Secrets Manager and publishes access logs to Kafka.</summary>
+
+##### Purpose
+Secure storage and encryption of Personal Identifiable Information (PII).  
+Handles access logging and GDPR compliance.
+
+**Functions:**
+- Isolated storage of name, email, DOB, and other PII fields.  
+- AES-256-GCM encryption at Bun application level.  
+- Keys stored and rotated every 90 days in AWS Secrets Manager.  
+- Access audit logged via Kafka (`pii.access.log`).
+
+##### Main API endpoints
+*(To be filled)*
+
+##### Kafka events (topics, schemas, version)
+*(To be filled)*
+
+##### Databases and collections used
+PostgreSQL (encrypted fields).
+
+##### External integrations
+AWS Secrets Manager, Kafka audit logs.
 </details>
 
 ---
@@ -569,501 +574,527 @@ MongoDB (коллекции topics, words, userProgress).
 ## 6. Integration and Communication
 <details>
   <summary>Event-Driven Communication</summary>
-  
-Все микросервисы взаимодействуют через Apache Kafka, обмениваясь событиями по принципу publish/subscribe./
-Каждый сервис имеет собственный набор топиков и умеет как публиковать, так и слушать сообщения./
-Такой подход обеспечивает асинхронность и слабую связанность между компонентами системы./
 
-**Основные принципы:**
-- Все события структурированы и валидируются через Schema Registry.
-- Топики Kafka версионируются в названии (user.events.v2, reader.content.v1).
-- Схемы сообщений имеют внутренние версии (1, 2, 3 и т.д.) в Schema Registry.
-- При изменении схемы проводится проверка совместимости (backward/forward).
-- Kafka работает в защищённом режиме (SASL_SSL) с аутентификацией по сертификатам.
+All microservices interact through **Apache Kafka** using the **publish/subscribe** pattern.  
+Each service has its own topic set and can both publish and consume messages.  
+This ensures asynchronous, decoupled communication between components.
 
---- ТУТ БУДЕТ СХЕМА: потоки событий Kafka и API-взаимодействий между сервисами ---
+**Core rules:**
+- All events are structured and validated via **Schema Registry**.  
+- Kafka topics are versioned in their names (`user.events.v2`, `reader.content.v1`).  
+- Message schemas have internal version history (1, 2, 3 …) in Schema Registry.  
+- Compatibility checks are enforced (backward/forward).  
+- Kafka operates in **SASL_SSL** mode with certificate-based authentication.
+
+--- DIAGRAM HERE: Kafka event and API flows between services ---
 </details>
 
 ### Data exchange mechanisms (Kafka topics)
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Summary</summary>
+  (Content to be defined)
 </details>
 
-### Versioning principles:
+### Versioning principles
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Summary</summary>
+  (Content to be defined)
 </details>
 
 ### API (/api/v1, /api/v2)
 <details>
-  <summary>Саммари</summary>
-  **API versioning**
-- Версии определяются в пути URL:
-```
-/api/v1/...  
+  <summary>Summary</summary>
+
+**API versioning**
+- Versions defined in URL paths:
+/api/v1/...
 /api/v2/...
-```
-- Старые версии поддерживаются параллельно, пока не завершён переход на новую.
-- Плановый переход между версиями на production происходит без downtime.
+
+- Old versions remain supported until migration is complete.  
+- Version transitions on production occur without downtime.
 </details>
 
 ### Kafka
 <details>
-  <summary>Саммари</summary>
-  
-- Названия топиков включают номер версии (user.events.v2).
-- Schema Registry хранит историю изменений и обеспечивает совместимость.
-- При выпуске новой версии микросервис может временно публиковать в оба топика (старый и новый), пока клиенты не перейдут.
+  <summary>Summary</summary>
+
+- Topic names include version numbers (`user.events.v2`).  
+- **Schema Registry** stores historical schemas and ensures compatibility.  
+- During transition, a service may publish to both old and new topics simultaneously until clients migrate.
 </details>
 
 ### Schema Registry (schema versions)
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Summary</summary>
+  (Content to be defined)
 </details>
 
 ### Client version checks
 <details>
-  <summary>Саммари</summary>
-  
-- Каждый клиент (веб, мобильный, десктопный) передаёт свою версию при обращении к API.
-- Если версия устарела и не поддерживает новые функции — пользователь видит сообщение с предложением обновить приложение.
-- При централизованном обновлении контента пользователю показывается уведомление, что обновление может повлиять на его прогресс.
+  <summary>Summary</summary>
+
+- Each client (web, mobile, desktop) sends its version with API requests.  
+- If outdated and incompatible, the user is prompted to update.  
+- When content updates occur centrally, users are notified that progress might be affected.
 </details>
 
 ### Scheduled tasks and cron jobs (e.g., weekly cohort updates)
 <details>
-  <summary>Саммари</summary>
-  
-- Cron-задачи на бэкенде управляют глобальными обновлениями:
-> пример — еженедельное обновление когорт слов (updateLearningCohorts()), запускается по понедельникам;
-> cron-задачи публикуют системные события в Kafka (system.cron.weekly).
-- Служебные события (ошибки, обновления схем, состояние брокеров) публикуются в системные топики (system.events.v1).
+  <summary>Summary</summary>
+
+- Backend cron jobs handle global updates:
+  > Example — weekly vocabulary cohort refresh (`updateLearningCohorts()`), executed on Mondays.  
+  > Cron jobs publish system events to Kafka (`system.cron.weekly`).
+
+- Utility system events (errors, schema updates, broker states) are published to system topics (`system.events.v1`).
 </details>
 
 ---
 
 ## 7. Data and Storage
-**Общая структура хранения данных**
-Система использует гибридную модель:
-- PostgreSQL для структурированных и чувствительных данных (профили, токены, роли, PII).
-- MongoDB для контента и учебных данных (словарей, текстов, тестов, прогресса).
-- AWS S3 для мультимедиа (аудио, видео, изображения, файлы).
-- Kafka как хранилище событий (event log), а также как транспорт между сервисами.
+
+**Overall data structure**
+The system uses a hybrid model:
+- **PostgreSQL** for structured and sensitive data (profiles, tokens, roles, PII).  
+- **MongoDB** for flexible educational data (dictionaries, texts, tests, progress).  
+- **AWS S3** for media storage (audio, video, images, files).  
+- **Kafka** for event logs and inter-service communication.
 
 ### General data model
 <details>
-  <summary>Cтруктура хранения данных</summary>
---- ТУТ БУДЕТ СХЕМА: структура хранения данных (PostgreSQL, MongoDB, AWS S3, Kafka) ---
+  <summary>Data storage structure</summary>
+
+--- DIAGRAM HERE: data structure (PostgreSQL, MongoDB, AWS S3, Kafka) ---
 </details>
 
 ### PostgreSQL / MongoDB
 <details>
   <summary>Division between PostgreSQL / MongoDB</summary>
-  
+
 **PostgreSQL**
-Используется для хранения данных авторизации и персональных данных.
-- Таблицы: users, roles, tokens, pii_encrypted.
-- Пароли хэшируются через Argon2.
-- Персональные данные шифруются AES-256-GCM (на уровне Bun-приложения).
-- Ключи хранятся и ротируются каждые 90 дней в AWS Secrets Manager.
+- Used for authentication and personal data.  
+- Tables: `users`, `roles`, `tokens`, `pii_encrypted`.  
+- Passwords hashed with **Argon2**.  
+- PII encrypted with **AES-256-GCM** (app-level).  
+- Keys stored and rotated every 90 days in AWS Secrets Manager.
 
 **MongoDB**
-Используется для контентных и динамических данных, где структура может меняться. Каждый сервис имеет свою базу или коллекции, не видит данные соседей.
-Примеры коллекций:
-- Thematic Cards Service — topics, words, userProgress.
-- Learning Cards Service — userWords, schedule.
-- Reader Service —
-> дефолтные тексты (встроенная библиотека),
-> пользовательские тексты (импортируемые пользователем),
-> тексты для тестов (встроенные).
-- Video Tests Service — videos, questions, results.
-- Admin Service — content, metadata.
+- Used for dynamic and content data.  
+- Each service owns its collections and does not access others’.
 
-Mongo хранит текстовые данные, результаты тестов, а также ссылки на мультимедиа в S3.
+Examples:
+- Thematic Cards Service — `topics`, `words`, `userProgress`.  
+- Learning Cards Service — `userWords`, `schedule`.  
+- Reader Service — built-in texts, user-imported texts, test texts.  
+- Video Tests Service — `videos`, `questions`, `results`.  
+- Admin Service — `content`, `metadata`.
+
+Mongo stores texts, test results, and links to S3 media.
 </details>
 
 ### AWS S3 storage per service
 <details>
-<summary>Каждый микросервис имеет свой изолированный префикс или бакет:</summary>
+  <summary>Each microservice has its isolated prefix or bucket:</summary>
+
 ```
 app-media/
- ├── cards/
- ├── reader/
- ├── video-tests/
- ├── profile/
+├── cards/
+├── reader/
+├── video-tests/
+├── profile/
 ```
-  
-**Основные правила:**
-- Сервисы не видят мультимедиа соседей (изоляция).
-- Допускаются дубли, если разные сервисы используют одинаковые ресурсы.
-- Аудио: .mp3 или .ogg, сжатие без потерь, доступ через pre-signed URLs.
-- Видео: .mp4 (H.264/AAC), CDN через CloudFront, архивные версии — в Glacier.
-- Изображения: .webp / .avif, автоматическая генерация превью через AWS Lambda.
-- Тексты: JSON / Markdown файлы в S3 (если не в Mongo).
-- В десктоп-версии видео зашифрованы и хранятся в бинарном виде без открытых файлов.
+
+
+**Main rules:**
+- Services cannot access other services’ media.  
+- Duplication allowed if shared resources are needed.  
+- **Audio:** .mp3 or .ogg, lossless compression, access via pre-signed URLs.  
+- **Video:** .mp4 (H.264/AAC), CDN via CloudFront, archived copies stored in Glacier.  
+- **Images:** .webp / .avif, auto-generated thumbnails via AWS Lambda.  
+- **Texts:** JSON / Markdown files in S3 (if not stored in Mongo).  
+- **Desktop videos:** encrypted binary form, not open files.
 </details>
 
 ### Caching (LocalStorage, per-service in-memory cache)
 <details>
-  <summary>Саммари</summary>
-  
-**Client-side:**
-- LocalStorage хранит Access/Refresh токены, роль, данные последней сессии.
+  <summary>Summary</summary>
 
-  **Server-side (per service):**
-- In-memory cache хранит активные сессии, циклы, недели, когорты слов.
-- Кэш состояния позволяет пользователю при входе вернуться в то место, где он закончил.
-- Обновление кэша происходит по событиям Kafka или cron-задачам.
+**Client-side:**
+- LocalStorage keeps Access/Refresh tokens, role, and last session data.
+
+**Server-side (per service):**
+- In-memory cache stores active sessions, cycles, word cohorts, progress.  
+- Allows the user to resume from their last saved state.  
+- Cache updates via Kafka events or cron jobs.
 </details>
 
 ### Session state and progress restoration
 <details>
-  <summary>Саммари</summary>
-  
-- При логине через Profile Service пользователь попадает в “Лобби”.
-- При входе в конкретный микросервис система восстанавливает сохранённое состояние (контекст обучения, сессия, прогресс).
-- Кэш состояния обновляется на событии выхода или при переходе в другой сервис.
+  <summary>Summary</summary>
+
+- After login (Profile Service), user lands in **Lobby**.  
+- Upon entering a microservice, system restores saved state (learning context, progress).  
+- Cache updates on logout or when switching between services.
 </details>
 
 ---
 
 ## 8. Security and PII
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Summary</summary>
+  (Content to be defined)
 </details>
 
-### Isolation of personal data 
+### Isolation of personal data
 <details>
   <summary>(PII Service)</summary>
-  Здесь описание первой темы.
+  (Content to be defined)
 </details>
 
-### Encryption: 
+### Encryption
 <details>
   <summary>AES-256-GCM, keys stored in AWS Secrets Manager</summary>
-  Здесь описание первой темы.
+  (Content to be defined)
 </details>
 
 ### Password hashing: Argon2
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Summary</summary>
+  (Content to be defined)
 </details>
 
-### Token-based authorization 
+### Token-based authorization
 <details>
   <summary>(Access + Refresh tokens)</summary>
-  Здесь описание первой темы.
+  (Content to be defined)
 </details>
 
-### Key rotation and access audit 
+### Key rotation and access audit
 <details>
   <summary>(Kafka pii.access.log)</summary>
-  Здесь описание первой темы.
+  (Content to be defined)
 </details>
 
 ### GDPR compliance
 <details>
-  <summary>export/delete endpoints, user.pii.updated event</summary>
-  Здесь описание первой темы.
+  <summary>export/delete endpoints, user.pii.updated</summary>
+
+**GDPR Compliance**
+- The **PII Service** provides full GDPR-compliant data management:
+  - `/export` — returns a downloadable, encrypted JSON package with all user data.  
+  - `/delete` — performs hard deletion of all user-related PII from PostgreSQL and cached stores.  
+- Each action generates corresponding Kafka events:
+  - `user.pii.exported` — when the export is completed.  
+  - `user.pii.deleted` — when personal data has been permanently removed.  
+- All events are archived in Kafka for compliance audits (`pii.audit.v1`).  
+- Users receive confirmation through the client application once the process completes.
 </details>
 
----
-
 ## 9. Logging and Monitoring
-**Цели и принципы**
-- Полная трассируемость событий и ошибок по всем сервисам.
-- Единый формат логов (JSON), обязательные поля: timestamp, service, env, version, level, correlationId, userId?.
-- Исключение PII из логов (маскирование email/телефонов), для доступа к PII — отдельный аудит-топик.
+
+**Goals and Principles**
+- Complete traceability of events and errors across all services.  
+- Unified JSON log format with required fields:  
+  `timestamp`, `service`, `env`, `version`, `level`, `correlationId`, `userId?`  
+- Exclude PII from logs (mask emails/phones).  
+  For access to PII, a separate audit topic is used.
 
 ### Application logs 
 <details>
   <summary>→ ELK</summary>
-  
-Содержимое: ошибки, console.error, тайминги, stack traces, ключевые бизнес-шаги./
-Сбор и доставка: Filebeat/Fluent Bit из контейнеров → Logstash → Elasticsearch./
-Индексация: app-logs-{service}-{env}-{yyyy.MM.dd} (ротация по дате)./
-Визуализация: Kibana (дашборды ошибок, latency per endpoint, частота ретраев)./
-Ретеншн: 30–90 дней (по критичности сервиса)./
+
+**Content:** errors, `console.error`, timings, stack traces, key business steps.  
+**Collection and delivery:** Filebeat/Fluent Bit from containers → Logstash → Elasticsearch.  
+**Indexing:** `app-logs-{service}-{env}-{yyyy.MM.dd}` (rotation by date).  
+**Visualization:** Kibana dashboards — error trends, endpoint latency, retry frequency.  
+**Retention:** 30–90 days depending on service criticality.
 </details>
 
 ### Event logs 
 <details>
   <summary>→ Kafka + S3 archive</summary>
-  
-Содержимое: бизнес-события (user.created, content.updated, test.completed)./
-Поток: продюсеры пишут в версионированные топики (*.v1/2), консьюмер-архиватор пишет в S3./
-Схемы: Schema Registry (совместимость backward/forward)./
-Архивирование: S3 с Lifecycle-политикой (холодное хранение/Glacier)./
-Ретеншн: активные топики — по нагрузке Kafka; архив в S3 — 180–365 дней./
+
+**Content:** business events (`user.created`, `content.updated`, `test.completed`).  
+**Flow:** producers write to versioned topics (*.v1/2), archiver-consumer writes to S3.  
+**Schemas:** Schema Registry ensures backward/forward compatibility.  
+**Archival:** S3 with lifecycle policy (cold storage/Glacier).  
+**Retention:** active topics — Kafka policy; S3 archive — 180–365 days.
 </details>
 
 ### System logs
 <details>
-  <summary> → ELK</summary>
-  
-Источники: Kafka-брокеры, ZooKeeper (если используется), Docker/Container Runtime, ОС, reverse proxy/ingress./
-Назначение: диагностика инфраструктуры, capacity, ошибки брокеров/дисков/сетей./
-Ретеншн: 30–90 дней (по SLA)./
+  <summary>→ ELK</summary>
+
+**Sources:** Kafka brokers, ZooKeeper (if used), Docker/Container Runtime, OS, reverse proxy/ingress.  
+**Purpose:** infrastructure diagnostics, capacity, broker/disk/network failures.  
+**Retention:** 30–90 days (depending on SLA).
 </details>
 
 ### Metrics / traces 
 <details>
   <summary>→ Prometheus + Grafana</summary>
-  
-Метрики приложений: latency, RPS/throughput, error rate, пулы подключений к БД, очередь задач/cron./
-Kafka-метрики: offsets, consumer lag, ISR, under-replicated partitions, broker disk usage./
-Экспортёры:/
-- HTTP-метрики из Bun (/metrics в Prometheus-формате);
-- JMX Exporter для Kafka;
-- Node Exporter для хостов/нод.
-- - Графики: Grafana (дашборды per-service, общий обзор платформы).
-- - Алерты (высокий уровень): на latency, error rate, consumer lag, диск/CPU/Memory (детали в разделе 12).
+
+**Application metrics:** latency, RPS/throughput, error rate, DB pool connections, cron queues.  
+**Kafka metrics:** offsets, consumer lag, ISR, under-replicated partitions, broker disk usage.
+
+**Exporters:**
+- HTTP metrics from Bun (`/metrics` in Prometheus format)  
+- JMX Exporter for Kafka  
+- Node Exporter for hosts/nodes  
+- Custom metrics for cron jobs (`job.last_run_time`, `job.status`)
+
+**Visualization:** Grafana dashboards per service and a platform overview.  
+**Alerts:** latency, error rate, consumer lag, CPU/memory usage (details in section 12).
 </details>
 
 ### Log retention and storage policies
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Summary</summary>
+  (Content to be defined)
 </details>
 
 ---
 
 ## 10. DevOps and CI/CD
-**Общая стратегия**
-Проект следует принципам инфраструктуры как кода (IaC) и полного CI/CD цикла через GitHub и Docker Compose. Каждый микросервис полностью изолирован — имеет отдельный репозиторий для фронтенда и бэкенда, свой pipeline и независимый деплой на AWS.
+
+**General strategy**  
+The project follows Infrastructure as Code (IaC) and full CI/CD principles via GitHub and Docker Compose.  
+Each microservice is fully isolated — with separate frontend/backend repos, pipelines, and independent AWS deployments.
 
 ### GitHub repositories (separate for each service, frontend/backend)
 <details>
-  <summary>Саммари</summary>
-  
-- Организация: GitHub (mono-org, multi-repo).
-- Для каждого микросервиса — 2 репозитория:
-> <service>-frontend
-> <service>-backend
-- Все репозитории используют одинаковую структуру папок и CI workflow-шаблоны (GitHub Actions).
-- Главная ветка: main → триггер на продакшен-деплой.
+  <summary>Summary</summary>
+
+- **Organization:** GitHub (mono-org, multi-repo).  
+- Each microservice has 2 repositories:
+  > `<service>-frontend`  
+  > `<service>-backend`
+- Repos share the same folder structure and CI workflow templates (GitHub Actions).  
+- Main branch: `main` → triggers production deployment.
 </details>
 
 ### CI 
 <details>
   <summary>Continuous Integration</summary>
-  
-- При каждом push или pull request:
--- Запуск unit и integration тестов (Vitest, Jest, Testcontainers).
--- Проверка линтеров и форматирования (ESLint, Prettier).
--- Проверка схем Kafka через Schema Registry (contract validation).
--- Сборка контейнера Docker и прогон smoke-тестов.
-- На PR-этапе создаются артефакты (сборки) и summary отчёт в GitHub Checks.
-- При неуспешных тестах merge блокируется.
+
+- On every push or pull request:
+  - Run unit and integration tests (**Vitest**, **Jest**, **Testcontainers**).  
+  - Linting and formatting checks (**ESLint**, **Prettier**).  
+  - Kafka schema validation via **Schema Registry**.  
+  - Docker container build and smoke tests.  
+- PR stage produces build artifacts and GitHub Checks summary report.  
+- Merge is blocked if tests fail.
 </details>
 
 ### CD 
 <details>
   <summary>Continuous Deployment</summary>
-  
-- Автоматический деплой при merge в main.
-- Используется Docker Compose и AWS ECS / EC2 для запуска контейнеров.
-- Деплой каждого микросервиса изолирован, без зависимости от других.
-- Секреты и переменные окружения загружаются из AWS Secrets Manager.
-- Приложение обновляется без downtime — rolling обновление контейнеров.
-- Деплой логируется и отображается в CI Dashboard (GitHub Actions + AWS CLI logs).
+
+- Automatic deployment after merge to `main`.  
+- **Docker Compose** and **AWS ECS/EC2** manage container execution.  
+- Each microservice deploys independently without dependency on others.  
+- Secrets and environment variables are loaded from **AWS Secrets Manager**.  
+- Rolling container updates — zero downtime.  
+- Deployment logs available in CI Dashboard (GitHub Actions + AWS CLI logs).
 </details>
 
-### Environments/Среды
+### Environments
 <details>
   <summary>local / production</summary>
-  
-- **Local** — полная среда для разработки (Docker Compose поднимает Kafka, Mongo, Postgres, сервисы).
-- **Production** — основная среда, деплой на AWS.
-- **Staging** (в планах) — будет использоваться для pre-release тестов и QA.
+
+- **Local** — full development environment (Docker Compose launches Kafka, Mongo, Postgres, and services).  
+- **Production** — main AWS deployment.  
+- **Staging** (planned) — for pre-release testing and QA.
 </details>
 
 ### Docker Compose and AWS deployment
 <details>
-  <summary>Саммари</summary>
-  
-- Каждый сервис имеет свой docker-compose.yml и общий шаблон для dev/CI.
-- Сервисы Kafka, MongoDB и PostgreSQL поднимаются локально при тестировании.
-- Используется multi-stage build для оптимизации размеров образов Bun и Angular.
-- Сетевые алиасы используются для межсервисного взаимодействия в dev-среде.
+  <summary>Summary</summary>
+
+- Each service has its own `docker-compose.yml` and a shared CI template.  
+- Kafka, MongoDB, and PostgreSQL spin up locally during testing.  
+- Multi-stage builds optimize Bun and Angular image sizes.  
+- Network aliases ensure inter-service communication in dev mode.
 </details>
 
-### Артефакты и версии
+### Artifacts and versioning
 <details>
-  <summary>Саммари</summary>
-  
-- Каждый деплой помечается Git-тегом (vX.Y.Z) и фиксируется в Changelog.
-- Версии сервисов и клиентов синхронизируются через Kafka-топик system.version.updated.
-- Система поддерживает обратную совместимость между минорными версиями.
+  <summary>Summary</summary>
+
+- Each deployment is tagged (`vX.Y.Z`) and logged in **Changelog**.  
+- Version updates synchronized via Kafka topic `system.version.updated`.  
+- Backward compatibility maintained for minor versions.
 </details>
 
 ### Planned addition of dev / staging environments
 <details>
-  <summary>Саммари</summary>
-  Здесь описание первой темы.
+  <summary>Summary</summary>
+  (Content to be defined)
 </details>
 
 ---
 
 ## 11. Testing and Quality
-**Общие принципы**
-Тестирование построено по многоуровневой модели и охватывает все аспекты — от юнитов до end-to-end сценариев./
-Главная цель — обеспечить стабильность микросервисов и гарантировать, что любые изменения кода не нарушают событийные связи и пользовательские сценарии./
-Вся автоматизация интегрирована в GitHub Actions и выполняется при каждом пуше и перед деплоем./
+
+**General principles**  
+Testing covers all layers — from unit to end-to-end scenarios.  
+Goal: ensure microservice stability and prevent breaking event or API contracts.  
+All automated tests run via GitHub Actions during commits and before deployment.
 
 ### Unit tests 
 <details>
-  <summary>Проверяют отдельные функции, компоненты и классы без внешних зависимостей. (Vitest, Jest)</summary>
-  
+  <summary>Verify individual functions, components, and classes. (Vitest, Jest)</summary>
+
 **Frontend (Angular)**
-- Фреймворк: Jest (вместо Karma).
-- Покрытие: компоненты, сервисы, пайпы, Zustand-хранилища.
-- Моки HTTP-запросов — через HttpClientTestingModule.
+- Framework: **Jest** (replaces Karma).  
+- Coverage: components, services, pipes, Zustand stores.  
+- Mocking: `HttpClientTestingModule`.
 
 **Backend (Bun)**
-- Фреймворк: Vitest (нативная поддержка Bun).
-- Моки зависимостей (vi.fn(), sinon).
-- Проверяются бизнес-правила, валидация, cron-задачи, генерация событий Kafka.
+- Framework: **Vitest** (native Bun support).  
+- Mocking via `vi.fn()` or `sinon`.  
+- Tests business logic, validation, cron jobs, Kafka event generation.
 
-✅ Запуск unit-тестов на каждом коммите и PR.
+✅ Runs on every commit and PR.
 </details>
 
 ### Integration tests 
 <details>
-<summary>Проверяют взаимодействие микросервисов и корректность API. (Testcontainers, Supertest)</summary>
-  
-- Используется Testcontainers (NodeJS SDK) для динамического запуска Kafka, MongoDB, PostgreSQL.
-- Каждый микросервис поднимается в контейнере с тестовой конфигурацией.
-- Проверяются сценарии:
--- создание пользователя → событие user.created → обработка Reader/Card Service;
--- обновление контента → content.updated → синхронизация кэшей клиентов.
-- Инструменты: Supertest, Vitest, Docker Compose (dev).
+  <summary>Validate inter-service interaction and API correctness. (Testcontainers, Supertest)</summary>
+
+- Uses **Testcontainers (NodeJS SDK)** to spin up Kafka, MongoDB, PostgreSQL dynamically.  
+- Each service runs inside a container with test configuration.  
+- Scenarios:
+  - Create user → `user.created` → processed by Reader/Card Service.  
+  - Update content → `content.updated` → client cache synchronization.  
+- Tools: **Supertest**, **Vitest**, **Docker Compose (dev)**.
 </details>
 
 ### End-to-End tests 
 <details>
-<summary>Проверяют поведение с точки зрения пользователя. (Playwright)</summary>
-  
-- Фреймворк: Playwright (Angular-friendly, кроссбраузерный).
-- Тестируются ключевые сценарии:
--- регистрация/логин,
--- выбор карточек и чтение текстов,
--- выполнение видео-теста,
--- проверка восстановления состояния после выхода.
-- Поддержка headless и CI-режима.
-- Отчёты (видео, скриншоты) сохраняются как артефакты CI.
+  <summary>Simulate real user behavior. (Playwright)</summary>
+
+- Framework: **Playwright** (Angular-friendly, cross-browser).  
+- Tests core flows:
+  - Registration/login  
+  - Flashcard and reading usage  
+  - Video test completion  
+  - State restoration after logout  
+- Supports headless and CI modes.  
+- Artifacts (videos, screenshots) saved in CI pipeline.
 </details>
 
 ### Contract tests 
 <details>
-<summary>(межсервисные контракты) Проверяют совместимость Kafka-событий и API. (Pact + Schema Registry)</summary>
-  
-- Инструмент: Pact + Schema Registry.
-- Продюсеры публикуют контракты (*.json / .avsc), консьюмеры проверяют совместимость.
-- Любое несовпадение схемы блокирует merge или деплой.
-- Используется для топиков user.events, content.updated, video.results.
+  <summary>Ensure compatibility of Kafka events and APIs. (Pact + Schema Registry)</summary>
+
+- Tools: **Pact**, **Schema Registry**.  
+- Producers publish JSON/AVSC contracts; consumers validate them.  
+- Schema mismatches block merges or deployments.  
+- Applied to topics: `user.events`, `content.updated`, `video.results`.
 </details>
 
 ### Load & Stress Tests
 <details>
-<summary>Проверяют устойчивость и производительность. (k6, Kafka performance tools)</summary>
-  
-- Инструменты:
--- k6 — нагрузка на REST API Bun.
--- Kafka Performance Tool — throughput, consumer lag, latency.
--- Grafana + Prometheus — визуализация задержек и производительности.
-- Периодический прогон — раз в неделю (через cron-job CI).
+  <summary>Check performance and stability. (k6, Kafka performance tools)</summary>
+
+- Tools:
+  - **k6** — REST API load testing for Bun.  
+  - **Kafka Performance Tool** — throughput, consumer lag, latency.  
+  - **Prometheus + Grafana** — visualization.  
+- Executed weekly via CI cron job.
 </details>
 
 ### Static Analysis & Quality Gates
 <details>
-<summary>(GitHub Actions)</summary>
-  
-- ESLint, Prettier — проверка синтаксиса и форматирования.
-- TypeScript strict mode — во всех сервисах.
-- SonarQube / CodeQL — анализ уязвимостей, дубликатов и dead code.
-- Coverage reports — собираются в CI, минимальный порог 85%.
+  <summary>(GitHub Actions)</summary>
+
+- **ESLint**, **Prettier** — syntax and formatting checks.  
+- **TypeScript strict mode** enforced.  
+- **SonarQube / CodeQL** — detect vulnerabilities, duplicates, dead code.  
+- **Coverage reports** collected in CI (min. 85% threshold).
 </details>
 
 ### CI test integration 
 <details>
   <summary>(GitHub Actions)</summary>
-  
-- GitHub Actions:
--- Unit + integration → при PR;
--- E2E → при merge в main;
--- Контракты и нагрузочные → при nightly build.
-- Неуспешные тесты блокируют деплой.
-- Все отчёты собираются в GitHub Checks и Slack.
+
+- GitHub Actions triggers:
+  - Unit + integration → on PR  
+  - E2E → on merge to main  
+  - Contract + load → nightly builds  
+- Failed tests block deployment.  
+- Reports sent to GitHub Checks and Slack.
 </details>
 
-### Manual QA (в разработке)
+### Manual QA (in development)
 <details>
   <summary>(GitHub Actions)</summary>
-  
-- Staging-среда будет использоваться для визуальных регрессионных тестов.
-- Планируется внедрение BackstopJS для сравнения UI состояний.
+
+- Staging environment planned for visual regression testing.  
+- **BackstopJS** will compare UI snapshots.
 </details>
 
 ---
 
 ## 12. Monitoring and Incident Response
-**Monitoring Overview**
-Система мониторинга построена на связке Prometheus + Grafana + ELK, с дополнительными алертами в Slack и Email./
-Мониторинг охватывает состояние инфраструктуры (Kafka, базы, контейнеры), производительность приложений и пользовательскую активность./
-Все данные агрегируются в центральные дашборды, доступные техническому администратору./
+
+**Monitoring Overview**  
+Monitoring is powered by **Prometheus + Grafana + ELK**, with alert delivery to Slack and Email.  
+It tracks infrastructure (Kafka, DBs, containers), app performance, and user activity.  
+All data is aggregated into centralized dashboards accessible to the Technical Admin.
 
 ### Metrics tracked 
 <details>
-<summary>Prometheus (latency, throughput, consumer lag)</summary>
-  
-- Каждый микросервис Bun экспортирует /metrics в формате Prometheus (latency, error rate, RPS, queue size).
-- Дополнительные экспортёры:
--- Kafka JMX Exporter — метрики брокеров, consumer lag, ISR, offset drift.
--- Node Exporter — системные показатели (CPU, RAM, Disk I/O, Network).
--- Postgres Exporter, Mongo Exporter — состояние подключений, запросов и репликации.
-- Метрики опрашиваются каждые 15–30 секунд.
-- Для cron-задач добавлены кастомные метрики (job.last_run_time, job.status).
+  <summary>Prometheus (latency, throughput, consumer lag)</summary>
+
+- Each Bun microservice exposes `/metrics` in Prometheus format (latency, error rate, RPS, queue size).  
+- Additional exporters:
+  - **Kafka JMX Exporter** — broker metrics, consumer lag, ISR, offset drift.  
+  - **Node Exporter** — CPU, RAM, Disk I/O, Network.  
+  - **Postgres/Mongo Exporters** — connections, query rates, replication.  
+- Metrics scraped every 15–30s.  
+- Cron job metrics: `job.last_run_time`, `job.status`.
 </details>
 
 ### Alerting 
 <details>
-<summary>(Grafana Alerts / Slack / Email)</summary>
-  
-- Дашборды разделены по категориям:
--- System — Kafka, брокеры, диски, CPU, Docker.
--- Application — latency API, throughput, error rate, consumer lag.
--- User Activity — активность пользователей, частота запросов к микросервисам.
-- Визуализация потоков Kafka и задержек консьюмеров.
-- Алерты:
--- 80% CPU или RAM usage;
--- рост latency более чем на 200%;
--- consumer lag >1000 сообщений;
--- ошибка деплоя или отказ контейнера.
-- Уведомления — Slack, Email (технический админ).
+  <summary>(Grafana Alerts / Slack / Email)</summary>
+
+**Dashboard categories:**
+- **System** — Kafka, brokers, disks, CPU, Docker.  
+- **Application** — API latency, throughput, error rate, consumer lag.  
+- **User Activity** — requests per microservice, engagement.
+
+**Visualizations:** Kafka flow graphs, consumer lag timelines.  
+**Alerts:**
+- CPU/RAM > 80%  
+- Latency increase > 200%  
+- Consumer lag > 1000 messages  
+- Deployment or container failure  
+
+**Notifications:** Slack and Email (Technical Admin).
 </details>
 
 ### ELK Stack
 <details>
-<summary>логи приложений и системы</summary>
-  
-- Отслеживает ошибки приложений и инфраструктуры.
-- В Kibana отдельные дашборды:
--- Error heatmap per service;
--- Latency по эндпоинтам;
--- Kafka broker error logs.
-- Периодически анализируются spike-пики ошибок и причины (stack traces, correlationId).
+  <summary>Application and system logs</summary>
+
+**Purpose:** Track application/infrastructure errors.  
+**Kibana Dashboards:**
+- Error heatmaps per service  
+- Endpoint latency charts  
+- Kafka broker error logs  
+Periodic analysis identifies spikes and causes (stack traces, correlationId).
 </details>
 
 ---
 
 ## 13. Roadmap and Future Development
-11-04-2025  MVP Version        Demo and uproval
-11-04-2025  Version 1.0.0
-11-04-2025  (будущее) Version 1.0.0      сервис он-лайн упражнений (драг-н-дроп и инпут поля) с автопроверкой. (drag-n-drop, input) реализован на основе Angular CDK, официального набора инструментов от Angular Team. CDK обеспечивает встроенные директивы и API для DnD (перетаскивания), без необходимости подключать сторонние библиотеки, сохраняя при этом полную интеграцию с Angular Material и общей архитектурой проекта.
 
+- **11-04-2025** — MVP Version, Demo and Approval  
+- **11-04-2025** — Version 1.0.0  
+- **(Future)** — Version 1.0.0: online exercises service (drag-and-drop and input fields) with auto-validation.  
+
+The exercise module is built using **Angular CDK**, the official Angular team toolkit for drag-and-drop.  
+CDK provides built-in directives and APIs for DnD functionality without third-party libraries, maintaining full integration with Angular Material and overall project architecture.

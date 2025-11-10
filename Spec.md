@@ -327,14 +327,8 @@ Central service for registration, login, role, and token management.
 - `user.events.v2`  
 - `user.security.v1`
 
-**Schemas:** TBD  
-**Versioning:** TBD
-
 ##### Databases and collections used
 PostgreSQL (`users`, `roles`, `tokens`).
-
-##### External integrations (AWS S3, Secrets Manager, etc.)
-*(None yet described)*
 </details>
 
 #### Lobby microservice
@@ -359,9 +353,6 @@ Navigation hub and interface router — single entry point for users after login
 ##### Kafka events (topics, schemas, version)
 **Kafka topics:**
 - `ui.navigation.v1` (listens to access-change events)
-
-**Schemas:** TBD  
-**Versioning:** TBD
 
 ##### Databases and collections used
 *(None)*
@@ -396,14 +387,8 @@ One of two independent card modules with distinct repetition algorithms.
 - `vocab.cards.v1`  
 - `vocab.progress.v1`
 
-**Schemas:** TBD  
-**Versioning:** TBD
-
 ##### Databases and collections used
 MongoDB (`topics`, `words`, `userProgress`).
-
-##### External integrations
-*(None yet described)*
 </details>
 
 #### Learning Cards microservice
@@ -441,8 +426,6 @@ Users build personal word lists grouped into weekly cohorts.
 ##### Databases and collections used
 MongoDB (`userWords`, `schedule`).
 
-##### External integrations
-*(None yet described)*
 </details>
 
 #### Reader microservice
@@ -478,8 +461,6 @@ Two independent MongoDB databases:
 - Built-in texts  
 - User-imported texts
 
-##### External integrations
-*(None yet described)*
 </details>
 
 #### Listening microservice
@@ -532,14 +513,9 @@ Does not access user data — operates solely on content.
 ##### Main API endpoints
 *(To be filled)*
 
-##### Kafka events (topics, schemas, version)
-*(To be filled)*
-
 ##### Databases and collections used
 MongoDB (`content`, `metadata`).
 
-##### External integrations
-*(None yet described)*
 </details>
 
 #### PII microservice
@@ -589,21 +565,15 @@ This ensures asynchronous, decoupled communication between components.
 --- DIAGRAM HERE: Kafka event and API flows between services ---
 </details>
 
-### Data exchange mechanisms (Kafka topics)
-<details>
-  <summary>Summary</summary>
-  (Content to be defined)
-</details>
-
 ### Versioning principles
 <details>
   <summary>Summary</summary>
   (Content to be defined)
 </details>
 
-### API (/api/v1, /api/v2)
+### API 
 <details>
-  <summary>Summary</summary>
+  <summary>/api/v1, /api/v2</summary>
 
 **API versioning**
 - Versions defined in URL paths:
@@ -616,22 +586,22 @@ This ensures asynchronous, decoupled communication between components.
 
 ### Kafka
 <details>
-  <summary>Summary</summary>
+  <summary>Kafka</summary>
 
 - Topic names include version numbers (`user.events.v2`).  
 - **Schema Registry** stores historical schemas and ensures compatibility.  
 - During transition, a service may publish to both old and new topics simultaneously until clients migrate.
 </details>
 
-### Schema Registry (schema versions)
+### Schema Registry 
 <details>
-  <summary>Summary</summary>
-  (Content to be defined)
+  <summary>Schema versions</summary>
+  Schema versions
 </details>
 
 ### Client version checks
 <details>
-  <summary>Summary</summary>
+  <summary>Client version checks</summary>
 
 - Each client (web, mobile, desktop) sends its version with API requests.  
 - If outdated and incompatible, the user is prompted to update.  
@@ -715,9 +685,9 @@ app-media/
 - **Desktop videos:** encrypted binary form, not open files.
 </details>
 
-### Caching (LocalStorage, per-service in-memory cache)
+### Caching 
 <details>
-  <summary>Summary</summary>
+  <summary>LocalStorage, per-service in-memory cache</summary>
 
 **Client-side:**
 - LocalStorage keeps Access/Refresh tokens, role, and last session data.
@@ -730,7 +700,7 @@ app-media/
 
 ### Session state and progress restoration
 <details>
-  <summary>Summary</summary>
+  <summary>Session state and progress restoration</summary>
 
 - After login (Profile Service), user lands in **Lobby**.  
 - Upon entering a microservice, system restores saved state (learning context, progress).  
@@ -740,44 +710,42 @@ app-media/
 ---
 
 ## 8. Security and PII
-<details>
-  <summary>Summary</summary>
-  (Content to be defined)
-</details>
 
 ### Isolation of personal data
 <details>
-  <summary>(PII Service)</summary>
-  (Content to be defined)
+  <summary>PII Service</summary>
+  PII Service
 </details>
 
 ### Encryption
 <details>
   <summary>AES-256-GCM, keys stored in AWS Secrets Manager</summary>
-  (Content to be defined)
+  
+  - AES-256-GCM
+  - Keys stored in AWS Secrets Manager
 </details>
 
-### Password hashing: Argon2
+### Password hashing: 
 <details>
-  <summary>Summary</summary>
-  (Content to be defined)
+  <summary>Argon2</summary>
+  Argon2
 </details>
 
 ### Token-based authorization
 <details>
-  <summary>(Access + Refresh tokens)</summary>
-  (Content to be defined)
+  <summary>Access + Refresh tokens</summary>
+  Access + Refresh tokens
 </details>
 
 ### Key rotation and access audit
 <details>
-  <summary>(Kafka pii.access.log)</summary>
-  (Content to be defined)
+  <summary>Kafka pii.access.log</summary>
+  Kafka pii.access.log
 </details>
 
 ### GDPR compliance
 <details>
-  <summary>export/delete endpoints, user.pii.updated</summary>
+  <summary>Export/delete endpoints, user.pii.updated</summary>
 
 **GDPR Compliance**
 - The **PII Service** provides full GDPR-compliant data management:
@@ -801,7 +769,7 @@ app-media/
 
 ### Application logs 
 <details>
-  <summary>→ ELK</summary>
+  <summary>ELK</summary>
 
 **Content:** errors, `console.error`, timings, stack traces, key business steps.  
 **Collection and delivery:** Filebeat/Fluent Bit from containers → Logstash → Elasticsearch.  
@@ -847,12 +815,6 @@ app-media/
 **Alerts:** latency, error rate, consumer lag, CPU/memory usage (details in section 12).
 </details>
 
-### Log retention and storage policies
-<details>
-  <summary>Summary</summary>
-  (Content to be defined)
-</details>
-
 ---
 
 ## 10. DevOps and CI/CD
@@ -861,9 +823,9 @@ app-media/
 The project follows Infrastructure as Code (IaC) and full CI/CD principles via GitHub and Docker Compose.  
 Each microservice is fully isolated — with separate frontend/backend repos, pipelines, and independent AWS deployments.
 
-### GitHub repositories (separate for each service, frontend/backend)
+### GitHub repositories 
 <details>
-  <summary>Summary</summary>
+  <summary>Separate for each service, frontend/backend</summary>
 
 - **Organization:** GitHub (mono-org, multi-repo).  
 - Each microservice has 2 repositories:
@@ -909,7 +871,7 @@ Each microservice is fully isolated — with separate frontend/backend repos, pi
 
 ### Docker Compose and AWS deployment
 <details>
-  <summary>Summary</summary>
+  <summary>Kafka, MongoDB, and PostgreSQL spin up locally during testing</summary>
 
 - Each service has its own `docker-compose.yml` and a shared CI template.  
 - Kafka, MongoDB, and PostgreSQL spin up locally during testing.  
@@ -919,17 +881,11 @@ Each microservice is fully isolated — with separate frontend/backend repos, pi
 
 ### Artifacts and versioning
 <details>
-  <summary>Summary</summary>
+  <summary>Version updates synchronized via Kafka topic</summary>
 
 - Each deployment is tagged (`vX.Y.Z`) and logged in **Changelog**.  
 - Version updates synchronized via Kafka topic `system.version.updated`.  
 - Backward compatibility maintained for minor versions.
-</details>
-
-### Planned addition of dev / staging environments
-<details>
-  <summary>Summary</summary>
-  (Content to be defined)
 </details>
 
 ---
@@ -1007,7 +963,7 @@ All automated tests run via GitHub Actions during commits and before deployment.
 
 ### Static Analysis & Quality Gates
 <details>
-  <summary>(GitHub Actions)</summary>
+  <summary>GitHub Actions</summary>
 
 - **ESLint**, **Prettier** — syntax and formatting checks.  
 - **TypeScript strict mode** enforced.  
@@ -1017,7 +973,7 @@ All automated tests run via GitHub Actions during commits and before deployment.
 
 ### CI test integration 
 <details>
-  <summary>(GitHub Actions)</summary>
+  <summary>GitHub Actions</summary>
 
 - GitHub Actions triggers:
   - Unit + integration → on PR  
@@ -1029,7 +985,7 @@ All automated tests run via GitHub Actions during commits and before deployment.
 
 ### Manual QA (in development)
 <details>
-  <summary>(GitHub Actions)</summary>
+  <summary>GitHub Actions</summary>
 
 - Staging environment planned for visual regression testing.  
 - **BackstopJS** will compare UI snapshots.
